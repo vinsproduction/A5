@@ -1,0 +1,280 @@
+<ul class="breadcrumb">
+  <li>
+    <a href="/manual">Manual</a> <span class="divider">/</span>
+  </li>
+  <li>
+    <a href="/manual/classes">Classes</a> <span class="divider">/</span>
+  </li>
+  <li>
+    <li class="active">FormBuilder</li>
+  </li>
+</ul>
+
+<p>Класс для быстрого построения форм и валидации</p>
+
+
+<pre class="prettyprint linenums">
+//Пример:
+button можно не указывать - будет по умолчанию.
+Обязательно указывать id формы. Важно при работе со множеством форм на странице!
+
+$Form = new FormBuilder('article');
+
+$Form->label('Имя');
+$Form->input('name')->value('Vins')->rule('empty', 'Поле не может быть пустым');
+$Form->label('Фамилия');
+$Form->input('surname')->id('77')->value('Poll');
+$Form->input('hidden')->type('hidden');
+$Form->label('Обо мне');
+$Form->textarea('about')->css('width:200px,height:80px')->value('программер');
+
+$Form->buttonSave()->value('Отправить')->hasClass('btn btn-primary');
+
+$Form->label('Свободное поле');
+$Form->freefield('free','Это свободный текст который может быть чем угодно');
+							
+exit($Form->render());
+</pre>
+
+
+<pre class="prettyprint linenums">
+//Пример с загрузкой изображений и селектом:
+
+$Form = new FormBuilder('ideas');
+
+// Поле Типы
+$types = array('1'=>'Тип 1','2'=>'Тип 2','3'=>'Тип 3');
+
+$_types = array();
+foreach($types as $i=>$type){			
+	if( isset($_POST['type']) ){			
+		if($i == $_POST['type']){
+			$_types[$i] = $type['name'].":selected";
+		}else{
+			$_types[$i] = $type['name'];	
+		}				
+	}else{
+		$_types[$i] = $type['name'];
+	}
+}
+
+$Form->label('Выберите тип');
+$Form->select('type',$_types);
+
+
+// Поле картинка
+$Form->label('Загрузить картинку');
+$Form->input('image')->type('file');
+$Form->input('imageNamePOST')->type('hidden')->value( @$_POST['image'] ); // если есть в базе
+
+$Form->label('Картинка');	
+$Form->freefield('imageFromBD', ( !empty( $_POST['image'] ) ) ? '&lt;img src="/data/ideas/'.$_POST['image'].'" alt="*" /&gt;' : 'Картинка не загружена');	
+
+if( $Form->post() )
+{	
+	if( !empty($_FILES['image']['name'])  ){
+	
+		$image = ImageClass::setObject($_FILES['image'])
+				->resize(280,NULL)
+				->save('data/ideas');
+		
+		$imageBig = $image->name;
+				
+		$_POST['image'] = $imageBig;	
+				
+	}elseif( !empty($_POST['imageNamePOST']) )
+	{			
+		$_POST['image'] = $_POST['imageNamePOST'];				
+	}
+	
+	if( @is_empty($_POST['image']) ) $Form->errorField('image','Картинка не загружена');	
+	
+	if($Form->ok()){
+	 // Если все ок - сохраняем в базу
+	}
+
+};
+</pre>	
+
+
+<table class="table table-striped">
+  <thead>	
+  </thead>
+  <tbody>
+  
+	<tr>				
+		<td>	
+		<pre class="prettyprint">form($formID)</pre>		
+		<p>
+		Старт формы
+		</p>
+		</td>
+	</tr>
+	
+	
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">action($url)</pre>		
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">input($name)</pre>		
+		</td>
+	</tr>
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">textarea($name)</pre>		
+		</td>
+	</tr>
+	
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">select($name, $options = array())</pre>		
+		<p>
+		EXAMPLE: ->select('test',array('1'=>'1','2'=>'2:selected','3'=>'3'))
+		</p>
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">checkbox($name)</pre>		
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">radio($name)</pre>		
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">check()</pre>		
+		<p>
+		EXAMPLE: ->checkbox('test')->check()
+		</p>
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">freefield($name,$html)</pre>		
+		<p>
+		Свободный текст в форме (если надо вставить какой нибудь текст межлу полями)
+		</p>
+		</td>
+	</tr><tr>				
+		<td>	
+		<pre class="prettyprint">buttonSave($name=false)</pre>		
+		<p>
+		Кнопка сохранения. Если надо переиментовать кнопку, дописываем ->value('текст на кнопке')
+		</p>
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">id($id)</pre>		
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">type($type)</pre>		
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">css($args)</pre>		
+		<p>
+		FORMAT: $Form->input('url')->css('width:500px,hight:50px')
+		</p>
+		</td>
+	</tr><tr>				
+		<td>	
+		<pre class="prettyprint">hasClass($name)</pre>		
+		<p>
+		Присвоение класса полю
+		</p>
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">value($value)</pre>		
+		</td>
+	</tr>
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">label($label)</pre>		
+		<p>
+		label ставится перед полем
+		</p>
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">errorField($fieldName, $errorName)</pre>		
+		<p>
+		Если надо задать вручную Error, пишем как в примере, не используя метод rule()
+		<br/>Обычно это бывает нужно когда например надо обработать отправку файла картинки
+		<br/>Но (!) в таком случает обрабочик сабмита формы надо делать по типу:
+		<br/>EXAMPLE:
+		<pre class="prettyprint">
+if( $Form->post() ){
+	if( @is_empty($_POST['url']) ) $Form->errorField('url','Длинное описание не заполнено');			
+	if($Form->ok()){				
+		// сохраняем в базу
+	}
+}
+		</pre>		
+		</p>
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">rule($name, $error = false)</pre>		
+		<p>
+		Валидация<br/>
+		EXAMPLE: $Form->input('url')->rule('notempty', 'Тут я хочу сам описать ошибку')->rule('min=3,max=10')
+		</p>
+		<pre class="prettyprint">
+//Примеры валидации
+
+->rule('notempty')
+->rule('email')
+->rule('min=3,max=10')
+->rule('numbers')
+->rule('letters')
+->rule('letters_eng')
+->rule('letters_rus')
+->rule('password')
+		</pre>	
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">post()</pre>		
+		<p>
+		Простой хелпер проверки post формы
+		</p>
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">submit()</pre>		
+		<p>
+		Проверка валидации и отправка формы. Если все ок возвращает TRUE
+		</p>
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">ok()</pre>		
+		<p>
+		Короткий статус упешной валидации
+		</p>
+		</td>
+	</tr>
+	
+  </tbody>
+</table>

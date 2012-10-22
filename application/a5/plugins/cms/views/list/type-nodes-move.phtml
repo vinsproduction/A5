@@ -1,0 +1,14 @@
+<? if (isset($status["errmsg"])): ?>
+	alert('<?= j($status["errmsg"]) ?>');
+<? else: ?>
+	var nodes = [];
+	var load_node_childs = [];
+	<? foreach ($status["affected_nodes"] as $item): ?>
+		nodes.push('<?= h($item["id"]) ?>');
+		load_node_childs.push('<?= h($item["parent_id"]) ?>');
+	<? endforeach ?>
+	var catalog_frame = null;
+	try { catalog_frame = parent.parent.frames['frame_catalog']; } catch (e) {}
+	if (catalog_frame) { catalog_frame.expand_tree(nodes, { 'load_node_childs': load_node_childs, 'node_inclusive': true }); }
+	reload_list();
+<? endif ?>

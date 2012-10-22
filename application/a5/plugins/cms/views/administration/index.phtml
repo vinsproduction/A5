@@ -1,0 +1,23 @@
+<div id="toolbar" style="position: absolute; width: 100%; top: 0px; left: 0px;">
+	<table class="toolbarset"><tr><td>
+		<div onclick="simple_button_press(function() { frames['frame_content'].location.href = '<?= url_for("action", "users-list") ?>'; }, this);" onmouseover="simple_button_over(this);" onmouseout="simple_button_out(this);" class="simple_button_off">Пользователи</div>
+		<div onclick="simple_button_press(function() { frames['frame_content'].location.href = '<?= url_for("action", "roles-list") ?>'; }, this);" onmouseover="simple_button_over(this);" onmouseout="simple_button_out(this);" class="simple_button_off">Роли пользователей</div>
+	</td></tr></table>
+</div>
+<iframe id="main_frame" name="frame_content" src="<?= CMS_PUBLIC_URI ?>/empty.php" frameborder="0" style="position: absolute; left: 0px; top: 0px; border: none; width: 100%;"></iframe>
+
+<script type="text/javascript">
+<!--
+function reposition_frames()
+{
+	try
+	{
+		$('main_frame').style.height = document.body.offsetHeight - $('toolbar').offsetHeight + 'px';
+		$('main_frame').style.top = $('toolbar').offsetHeight + 'px';
+	} catch (e) {}
+}
+add_event_listener(window, 'load', function() { setTimeout(function() { reposition_frames(); }, 10); });
+add_event_listener(window, 'resize', function() { setTimeout(function() { reposition_frames(); }, 10); });
+disable_selection($('toolbar'));
+//-->
+</script>

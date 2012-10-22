@@ -1,0 +1,90 @@
+<ul class="breadcrumb">
+  <li>
+    <a href="/manual">Manual</a> <span class="divider">/</span>
+  </li>
+  <li>
+    <a href="/manual/mvc">MVC</a> <span class="divider">/</span>
+  </li>
+  <li>
+    <li class="active">DB</li>
+  </li>
+</ul>
+
+<table class="table">
+  <thead>
+	 <tr>
+      <th>Function</th>
+	  <th>Description</th>
+	  <th>Example</th>
+	  <th>Return</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><pre class="prettyprint">db_select_all($query,$placeholders)</pre></td>
+      <td>Выбор всех полей</td>
+	  <td><pre class="prettyprint">db_select_all('SELECT * FROM test')</pre></td>
+	  <td>array()</td>
+    </tr>
+	<tr>
+      <td><pre class="prettyprint">db_select_all($query,$array_placeholders)</pre></td>
+      <td>Выбор всех полей (еще один способ)</td>
+	  <td><pre class="prettyprint">
+$where['email'] = 'vins';
+$where['@limit'] = 3;
+$where['@order'] = 'name DESC';
+	
+db_select_all('SELECT * FROM',$where)
+</pre></td>
+	  <td>array()</td>
+    </tr>
+	<tr>
+      <td><pre class="prettyprint">db_select_all($query,$placeholders)</pre></td>
+      <td>Выбор всех полей по ключу</td>
+	  <td><pre class="prettyprint">db_select_all('SELECT * FROM test',array("@key" => "group_id,id"))</pre></td>
+	  <td>array()</td>
+    </tr>
+	<tr>
+      <td><pre class="prettyprint">db_select_row($query,$placeholders)</pre></td>
+      <td>Выбор одной строки</td>
+	  <td><pre class="prettyprint">db_select_row('SELECT * FROM test WHERE id = ?i AND name = ?', $id, $name)</pre></td>
+	  <td>array() or false</td>
+    </tr>
+	<tr>
+      <td><pre class="prettyprint">select_cell($query,$placeholders)</pre></td>
+      <td>Выбор только одного значения</td>
+	  <td><pre class="prettyprint">select_cell('SELECT name FROM test WHERE name = ?', $name)</pre></td>
+	  <td>value or false</td>
+    </tr>
+	<tr>
+      <td><pre class="prettyprint">db_select_col($query,$placeholders)</pre></td>
+      <td>Выбор колонки</td>
+	  <td><pre class="prettyprint">db_select_col('SELECT name FROM test WHERE name = ?', $name)</pre></td>
+	  <td>array()</td>
+    </tr>
+	<tr>
+      <td colspan="4">Placeholders:<pre class="prettyprint">"?b" => "bool", "?i" => "int", "?B" => "blob", "?dt" => "datetime", "?d" => "date", "?t" => "time", "?r" => "real", "?" => "str"</pre></td>
+    </tr>
+	
+	<tr>
+      <td><pre class="prettyprint">db_insert($table_name, $fields)</pre></td>
+      <td>Insert</td>
+	  <td><pre class="prettyprint">db_insert('test',array('name'=>'vins'))</pre></td>
+	  <td>id</td>
+    </tr>
+	<tr>
+      <td><pre class="prettyprint">db_update($table_name, $fields, $cond = array())</pre></td>
+      <td>Update</td>
+	  <td><pre class="prettyprint">db_update('test',array('name'=>'vins'),array('id'=>1))</pre></td>
+	  <td>id</td>
+    </tr>
+	<tr>
+      <td><pre class="prettyprint">db_delete($table_name, $cond = array())</pre></td>
+      <td>Delete</td>
+	  <td><pre class="prettyprint">db_delete('test',array('id'=>1))</pre></td>
+	  <td>id</td>
+    </tr>
+	
+	
+  </tbody>
+</table>

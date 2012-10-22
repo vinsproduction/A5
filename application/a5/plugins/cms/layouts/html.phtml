@@ -1,0 +1,21 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title><? if (isset($_PAGE["title"])): ?><?= h($_PAGE["title"]) ?><? endif ?></title>
+	<link rel="stylesheet" type="text/css" href="<?= CMS_PUBLIC_URI ?>/css/cms.css">
+</head>
+<body class="<? if (isset($_PAGE["main_bg"])): ?><?= h($_PAGE["main_bg"]) ?><? else: ?>window-bg<? endif ?>" style="overflow: <? if (isset($_PAGE["body_overflow"])): ?><?= h($_PAGE["body_overflow"]) ?><? else: ?>hidden<? endif ?>;">
+
+<script type="text/javascript" src="<?= CMS_PUBLIC_URI ?>/js/base64.js"></script>
+<script type="text/javascript" src="<?= CMS_PUBLIC_URI ?>/js/serializer.js"></script>
+<script type="text/javascript" src="<?= CMS_PUBLIC_URI ?>/js/cookies.js"></script>
+<script type="text/javascript" src="<?= CMS_PUBLIC_URI ?>/js/ntcalendar.js"></script>
+<script type="text/javascript" src="<?= CMS_PUBLIC_URI ?>/js/windows.js"></script>
+<script type="text/javascript" src="<?= CMS_PUBLIC_URI ?>/js/misc.js"></script>
+<script type="text/javascript" src="javascripts/swfobject.js"></script>
+<script type="text/javascript" src="javascripts/ajax.js"></script>
+
+<? include_view() ?>
+
+</body>
+</html>

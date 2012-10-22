@@ -1,0 +1,301 @@
+<ul class="breadcrumb">
+  <li>
+    <a href="/manual">Manual</a> <span class="divider">/</span>
+  </li>
+  <li>
+    <a href="/manual/classes">Classes</a> <span class="divider">/</span>
+  </li>
+  <li>
+    <li class="active">ImageClass</li>
+  </li>
+</ul>
+
+<p>
+Класс для работы с изображениями.<br/>
+<br/> Убедитесь, что библитека GD подключена (phpinfo())	
+</p>
+
+
+<pre class="prettyprint linenums">
+// Пример работы:
+$image = ImageClass::setObject($_FILES['image'])
+		->grayscale()
+		->resize(350, 350)
+		->crop(100, 100)
+		->save('img/lessons')
+
+print $image->view(); 
+</pre>		
+
+
+<table class="table">
+  <thead>	
+  </thead>
+  <tbody>
+  
+	<tr>				
+		<td>	
+		<pre class="prettyprint">set($file)</pre>		
+		<p>
+	Полная информация о файле
+    <br/>  На вход array  $_FILES или(!) Путь до изображения, если файл локальный. 
+	 <br/>Также можно передавать и любые другие файлы
+	 <br/> $uploaded = ImageClass::set($_FILES['index']);
+	 <br/> $uploaded = ImageClass::set('img/photo.jpg');
+		</p>
+		</td>
+	</tr>
+	
+	
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">setObject($file)</pre>		
+		<p>
+		Тоже самое что и выше, но в форме объекта
+    <br/> На вход array $_FILES
+     <br/> $image = ImageClass::setObject($_FILES['index']);
+		</p>
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">save($path,$unicname = false,$quality = 100)</pre>		
+		<p>
+		Аплоад файла. На вход - путь до папки, куда надо сделать выгрузку. 
+     Возвращает Имя файла с расширением или ошибку!
+     
+     <br/> 
+     $image = ImageClass::setObject($_FILES['index'])->save('img/lessons','filename',80);
+		</p>
+		</td>
+	</tr>
+	
+	
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">render($type = NULL, $quality = 100)</pre>		
+		<p>
+		Render картинки. Возвращет data файла, в строку
+     <br/>
+     <br/>     // Render the image at 50% quality
+     <br/>     $data = $image->render(NULL, 50);
+     <br/>
+     <br/>     // Render the image as a PNG
+     <br/>     $data = $image->render('png');
+     <br/>
+     <br/><br/>  string   image type to return: png, jpg, gif, etc
+     <br/><br/>  integer  quality of image: 1-100
+
+     <br/>
+     <br/> Просмотреть после рендера можно так:
+     <br/> header('Content-type: ' . $data->type);
+       exit($data->render());
+		</p>
+		</td>
+	</tr>
+	
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">view()</pre>		
+		<p>
+		Просмотр data файла.
+		</p>
+		</td>
+	</tr>
+	
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">download()</pre>		
+		<p>
+	Скачивание файла.	
+		</p>
+		</td>
+	</tr>
+	
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">grayscale()</pre>		
+		<p>
+		Черно белый фильтр
+		</p>
+		</td>
+	</tr>
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">text($text,$fontSize=false,$x=false,$y=false,$fontColor=false,$font_file=false,$fontAngle=false)</pre>		
+		<p>
+		Текст на картинке<br/>
+		Example:
+		ImageClass::setObject('data/original/17395614.jpg')
+		->text('Example',50,105,55,'#0F67A1')
+		->save('data')
+		</p>
+		</td>
+	</tr>
+	
+	
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">resize($width = NULL, $height = NULL, $master = NULL)</pre>		
+		<p>
+		 Resize the image to the given size. Either the width or the height can
+     <br/> be omitted and the image will be resized proportionally.
+     <br/>
+     <br/>     // Resize to 200 pixels on the shortest side
+     <br/>     $image->resize(200, 200);
+     <br/>
+     <br/>     // Resize to 200x200 pixels, keeping aspect ratio
+     <br/>     $image->resize(200, 200, ImageClass::INVERSE);
+     <br/>
+     <br/>     // Resize to 500 pixel width, keeping aspect ratio
+     <br/>     $image->resize(500, NULL);
+     <br/>
+     <br/>     // Resize to 500 pixel height, keeping aspect ratio
+     <br/>     $image->resize(NULL, 500);
+     <br/>
+     <br/>     // Resize to 200x500 pixels, ignoring aspect ratio
+     <br/>     $image->resize(200, 500, ImageClass::NONE);
+		</p>
+		</td>
+	</tr>
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">square($ratio_size)</pre>		
+		<p>
+		Кропает квадратом. $ratio_size - ширина и высота кропа
+		$image->square(100); 
+		</p>
+		</td>
+	</tr>
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">crop($width, $height, $offset_x = NULL, $offset_y = NULL)</pre>		
+		<p>
+		 Crop an image to the given size. Either the width or the height can be
+     <br/> omitted and the current width or height will be used.
+     <br/>
+     <br/> If no offset is specified, the center of the axis will be used.
+     <br/> If an offset of TRUE is specified, the bottom of the axis will be used.
+     <br/>
+     <br/>     // Crop the image to 200x200 pixels, from the center
+     <br/>     $image->crop(200, 200);
+
+		</p>
+		</td>
+	</tr>
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">rotate($degrees)</pre>		
+		<p>
+		 Rotate the image by a given amount.
+     <br/>
+     <br/>     // Rotate 45 degrees clockwise
+     <br/>     $image->rotate(45);
+     <br/>
+     <br/>     // Rotate 90% counter-clockwise
+     <br/>     $image->rotate(-90);
+
+		</p>
+		</td>
+	</tr>
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">flip($direction)</pre>		
+		<p>
+		 Flip the image along the horizontal or vertical axis.
+     <br/>
+     <br/>     // Flip the image from top to bottom
+     <br/>     $image->flip(ImageClass::HORIZONTAL);
+     <br/>
+     <br/>     // Flip the image from left to right
+     <br/>     $image->flip(ImageClass::VERTICAL);
+     <br/>
+     <br/><br/>  integer  direction: ImageClass::HORIZONTAL, ImageClass::VERTICAL
+
+		</p>
+		</td>
+	</tr>
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">sharpen($amount)</pre>		
+		<p>
+		Sharpen the image by a given amount.
+     <br/>
+     <br/>     // Sharpen the image by 20%
+     <br/>     $image->sharpen(20);
+     <br/>
+     <br/><br/>  integer  amount to sharpen: 1-100
+
+		</p>
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">reflection($height = NULL, $opacity = 100, $fade_in = FALSE)</pre>		
+		<p>
+		 Add a reflection to an image. The most opaque part of the reflection
+     <br/> will be equal to the opacity setting and fade out to full transparent.
+     <br/> Alpha transparency is preserved.
+     <br/>
+     <br/>     // Create a 50 pixel reflection that fades from 0-100% opacity
+     <br/>     $image->reflection(50);
+     <br/>
+     <br/>     // Create a 50 pixel reflection that fades from 100-0% opacity
+     <br/>     $image->reflection(50, 100, TRUE);
+     <br/>
+     <br/>     // Create a 50 pixel reflection that fades from 0-60% opacity
+     <br/>     $image->reflection(50, 60, TRUE);
+     <br/>
+     <br/> [!!] By default, the reflection will be go from transparent at the top
+     <br/> to opaque at the bottom.
+		</p>
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">watermark(ImageClass $watermark, $offset_x = NULL, $offset_y = NULL, $opacity = 100)</pre>		
+		<p>
+		Add a watermark to an image with a specified opacity. Alpha transparency
+     <br/> will be preserved.
+     <br/>
+     <br/> If no offset is specified, the center of the axis will be used.
+     <br/> If an offset of TRUE is specified, the bottom of the axis will be used.
+     <br/>
+     <br/>     // Add a watermark to the bottom right of the image
+     <br/>     $mark = ImageClass::factory('upload/watermark.png');
+     <br/>     $image->watermark($mark, TRUE, TRUE);
+		</p>
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">background($color, $opacity = 100)</pre>		
+		<p>
+		Set the background color of an image. This is only useful for images
+     <br/> with alpha transparency.
+     <br/>
+     <br/>     // Make the image background black
+     <br/>     $image->background('#000');
+     <br/>
+     <br/>     // Make the image background black with 50% opacity
+     <br/>     $image->background('#000', 50);
+
+		</p>
+		</td>
+	</tr>
+	
+	
+  </tbody>
+</table>

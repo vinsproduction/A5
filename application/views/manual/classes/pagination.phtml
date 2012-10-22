@@ -1,0 +1,61 @@
+<ul class="breadcrumb">
+  <li>
+    <a href="/manual">Manual</a> <span class="divider">/</span>
+  </li>
+  <li>
+    <a href="/manual/classes">Classes</a> <span class="divider">/</span>
+  </li>
+  <li>
+    <li class="active">Pagination</li>
+  </li>
+</ul>
+
+
+<table class="table">
+  <thead>	
+  </thead>
+  <tbody>
+  
+	<tr>				
+		<td>	
+		<pre class="prettyprint">Pagination::construct($count, $p = array())</pre>		
+		<p>
+		Возвращает массив с данными о навигации
+	 <br/> Первым параметром передаётся количество элементов которые нужно пролистывать
+	 <br/> Вторым параметром передаётся массив с ключами для уточнения параметров листинга, поддерживаются следующие ключи:
+	 <br/> limit - максимальное количество элементов выводимое на одной странице
+	 <br/> pages_limit - максимальное количество номеров страниц выводимое на одной странице
+	 <br/> varname - имя переменной в QUERY_STRING используемой для указания текущей страницы (По-умолчанию: page)
+	 <br/> uri - ссылка используемая для навигации (По-умолчанию: текущая страница)
+	 <br/>
+	 <br/> На выход отдаёт массив следующего вида:
+	<pre class="prettyprint"> array
+(
+"pages" => array() of array("number" => 4, "link" => "script.php?...", "current" => true : false),
+"next_section" => array() of array("number" => 4, "link" => "script.php?...", "current" => true : false),
+"prev_section" => array() of array("number" => 4, "link" => "script.php?...", "current" => true : false),
+"next_page" => array("number" => 4, "link" => "script.php?...", "current" => true : false),
+"prev_page" => array("number" => 4, "link" => "script.php?...", "current" => true : false),
+"first_page" => array("number" => 1, "link" => "script.php?...", "current" => true : false),
+"last_page" => array("number" => 4, "link" => "script.php?...", "current" => true : false),
+"limit" => (int),
+"offset" => (int),
+)
+</pre>	
+	 <br/> Ключи массива означают следующее:
+	 <br/> pages - массив с информацией о страницах (если пустой - навигация не требуется)
+	 <br/> next_section - информация о следующем блоке страниц - если таковой требуется, не пустой в случае если количество номеров страниц превышает pages_limit
+	 <br/> prev_section - информация о предыдущем блоке страниц - если таковой требуется, не пустой в случае если количество номеров страниц превышает pages_limit
+	 <br/> next_page - информация о следующей странице
+	 <br/> prev_page - информация о предыдущей странице
+	 <br/> first_page - информация о самой первой странице
+	 <br/> last_page - информация о самой последней странице
+	 <br/> limit - количество элементов выводимых на одной странице - можно использовать для SQL-выражений LIMIT
+	 <br/> offset - номер первого элемента на текущей странице относительно всего количества в целом, нумерация начинается с 0 - можно использовать для SQL-выражений OFFSET
+		</p>
+		</td>
+	</tr>
+	
+	
+  </tbody>
+</table>

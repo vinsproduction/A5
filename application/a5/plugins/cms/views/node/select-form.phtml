@@ -1,0 +1,9 @@
+<table class="wide"><tr><td style="text-align: center;">
+	<table><tr><td style="text-align: left;">
+		<ul>
+		<? foreach ($child_types as $item): ?>
+			<li><a href="javascript:void(parent.location = '<?= url_for("action", "index", "type", $item["type"], "parent_id", $_GET["parent_id"], "lang", isset($_GET["lang"]) ? $_GET["lang"] : null) ?>');"><?= h($item["name"]) ?></a></li>
+		<? endforeach ?>
+		</ul>
+	</td></tr></table>
+</td></tr></table>

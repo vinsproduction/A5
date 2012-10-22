@@ -1,0 +1,22 @@
+
+	<div class="well sidebar-nav">
+		<ul class="nav nav-list">		
+			<li class="nav-header">Sidebar</li>
+		  
+			<? if($links) :?><? foreach($links as $i=>$item)  :?>
+				<li <? if($i==0) :?>class="active"<? endif;?>><a href="#">Link</a></li>			
+			<? endforeach;?><? endif;?>
+			
+			
+			<li class="nav-header">Sidebar</li>	  
+			<? if($links) :?><? foreach($links as $i=>$item)  :?>
+				<li><a href="#">Link</a></li>			
+			<? endforeach;?><? endif;?>
+			
+			<li class="nav-header">Sidebar</li>		  
+			<? if($links) :?><? foreach($links as $i=>$item)  :?>
+				<li><a href="#">Link</a></li>			
+			<? endforeach;?><? endif;?>
+			
+		</ul>
+	</div>

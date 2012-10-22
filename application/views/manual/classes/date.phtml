@@ -1,0 +1,66 @@
+<ul class="breadcrumb">
+  <li>
+    <a href="/manual">Manual</a> <span class="divider">/</span>
+  </li>
+  <li>
+    <a href="/manual/classes">Classes</a> <span class="divider">/</span>
+  </li>
+  <li>
+    <li class="active">Date</li>
+  </li>
+</ul>
+
+
+<table class="table">
+  <thead>	
+  </thead>
+  <tbody>
+  
+	<tr>				
+		<td>	
+		<pre class="prettyprint">Date::format($date, $format = null)</pre>		
+		<p>
+	Основной часто-используемый метод
+	<br/> Первым параметром метод принимает либо строку - в таком случае пытается преобразовать её в объект DateTime
+	<br/> либо уже готовый объект DateTime (http://www.php.net/datetime)
+	<br/> второй параметр - способ форматирования возвращаемой даты, если не передан - возвращается сам объект DateTime
+	<br/> параметры для форматирования можно посмотреть здесь: http://ru.php.net/manual/en/function.date.php
+	<br/> в случае если входная дата неверная - возвращает false.
+	<br/> В отличии от стандартного поведения объекта DateTime при передачи пустой строки метод не возвращает текущее время,
+	<br/> вместо этого он возвращает false - указывая на то что дату не указали или указали неверно
+		</p>
+		</td>
+	</tr>
+	
+	
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">Date::days_in_months($year)</pre>		
+		<p>
+		Возвращает массив содержащий инфрмацию о количестве дней в каждом из месяцев для указанного года
+		</p>
+		</td>
+	</tr>
+	<tr>				
+		<td>	
+		<pre class="prettyprint">Date::days_in_month($month, $year)</pre>		
+		<p>
+	Возвращает количество дней в указанном месяце для указанного года, месяц от 1 до 12
+	<br/> если месяц передан неверно - false
+		</p>
+		</td>
+	</tr>
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">Date::convert_month($month)</pre>		
+		<p>
+		Конвертировние номера месяца в название
+		</p>
+		</td>
+	</tr>
+	
+	
+  </tbody>
+</table>

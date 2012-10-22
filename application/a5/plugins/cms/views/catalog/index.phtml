@@ -1,0 +1,62 @@
+<? if (isset($_GET["callback"])): ?>
+	<script type="text/javascript">
+	function callback_function(url, params)
+	{
+		try
+		{
+			var result = <?= $_GET["callback"] ?>(url, params);
+			if (result !== false) { window.close(); }
+		}
+		catch (e) {}
+	}
+	</script>
+<? elseif (isset($_GET["fck_callback"])): ?>
+	<script type="text/javascript">
+	<? if ($_GET["fck_callback"] == "node"): ?>
+		function callback_function(url, params)
+		{
+			var use_ckeditor = false;
+
+			if (use_ckeditor)
+			{
+				opener.CKEDITOR.tools.callFunction('<?= j(@$_GET["CKEditorFuncNum"]) ?>', '<?= CMS_URL_MARKER_PREFIX ?>' + url + '<?= CMS_URL_MARKER_SUFFIX ?>', function()
+				{
+					var dialog = this.getDialog();
+					if (dialog.getName() == 'link') { dialog.setValueOf('info', 'protocol', ''); }
+					// Uncomment if you want CKEditor to ignore url parameter
+					// return false;
+				});
+			}
+			else
+			{
+				try
+				{
+					opener.SetUrl('<?= CMS_URL_MARKER_PREFIX ?>' + url + '<?= CMS_URL_MARKER_SUFFIX ?>');
+					opener.document.getElementById('cmbLinkProtocol').options[4].selected = true;
+				} catch (e) {}
+			}
+
+			window.close();
+		}
+	<? endif ?>
+	</script>
+<? endif ?>
+<? if (!isset($_GET["frame_func"]) || $_GET["frame_func"]): ?>
+	<frameset border="5" frameborder="1" cols="210,*">
+<? else: ?>
+	<frameset border="5" frameborder="1" cols="*">
+<? endif ?>
+	<frame scrolling="no" name="frame_catalog" src="<?= url_for
+	(
+		"-controller", "catalog",
+		"action", "tree",
+		"id", @$_GET["id"],
+		"show_full_tree", @$_GET["show_full_tree"],
+		"only_type", isset($_GET["only_type"]) ? $_GET["only_type"] : null,
+		"expand_to", isset($_GET["expand_to"]) ? $_GET["expand_to"] : null,
+		"lang", isset($_GET["lang"]) ? $_GET["lang"] : null
+	) ?>">
+	<? if (!isset($_GET["frame_func"]) || $_GET["frame_func"]): ?>
+		<frame scrolling="no" name="frame_func" src="<?= CMS_PUBLIC_URI ?>/empty.php">
+	<? endif ?>
+</frameset>

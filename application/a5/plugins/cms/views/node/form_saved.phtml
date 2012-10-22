@@ -1,0 +1,81 @@
+<script type="text/javascript">
+<? A5::url_for_default("javascript") ?>
+var catalog_frame = null;
+// Вариант при вызове из фрейма каталога 
+try { catalog_frame = parent.parent.opener.parent.frames['frame_catalog']; } catch (e) {}
+// Вариант при вызове из списка
+if (!catalog_frame) { try { catalog_frame = parent.parent.opener.parent.parent.frames['frame_catalog']; } catch (e) {} }
+if (catalog_frame)
+{
+	try
+	{
+		// После добавления ноды мы должны открыть дерево до указанной ноды
+		// При этом нужно по-любому загрузить детей её parent_id
+		// А также нужно загрузить детей parent_id от parent_id
+		<? if ($_CMS["do"] == "add"): ?>
+			<? if (isset($_POST["id"])): ?>
+				<?
+				$load_node_childs = array();
+				$load_node_childs[] = "'" . j($_POST["parent_id"]) . "'";
+				$parent_id = db_select_cell("SELECT parent_id FROM cms_nodes WHERE id = ?i", $_POST["parent_id"]);
+				if ($parent_id !== false) { $load_node_childs[] = "'" . j($parent_id) . "'"; }
+				?>
+				catalog_frame.expand_tree(['<?= j($_POST["id"]) ?>'], {'load_node_childs': [<?= implode(",", $load_node_childs) ?>]});
+			<? endif ?>
+		<? elseif ($_CMS["do"] == "mod"): ?>
+			<?
+			$load_node_childs = array();
+			$load_node_childs[] = "'" . j($_POST["parent_id"]) . "'";
+			?>
+			catalog_frame.expand_tree(['<?= j($_POST["id"]) ?>'], {'load_node_childs': [<?= implode(",", $load_node_childs) ?>]});
+		<? endif ?>
+	} catch (e) {}
+}
+
+var list_frame = null;
+// Вариант при вызове из фрейма каталога 
+try { list_frame = parent.parent.opener.parent.frames['frame_func'].frames['frame_list']; } catch (e) {}
+// Вариант при вызове из списка
+if (!list_frame) { try { list_frame = parent.parent.opener.parent.frames['frame_list']; } catch (e) {} }
+
+if (list_frame)
+{
+	try
+	{
+		if (list_frame.list_type == '<?= j($_POST["type"]) ?>')
+		{ list_frame.reload_list(); }
+	} catch (e) {}
+}
+
+<? if ($_CMS["do"] == "add"): ?>
+	<? if (action() == "form"): ?>
+		<? if ($_CMS["one_more"]): ?>
+			<? if (!$_CMS["no_clean"]): ?>
+				parent.parent.frames['frame_node_content'].location.href = '<?= url_for("action", "form", "type", $_POST["type"], "parent_id", $_POST["parent_id"], "lang", isset($_POST["lang"]) ? $_POST["lang"] : null) ?>';
+			<? endif ?>
+			parent.parent.frames['frame_node_footer'].status_saved();
+		<? elseif ($_CMS["no_close"]): ?>
+			parent.parent.frames['frame_node_header'].location.href = '<?= url_for("action", "header", "type", $_POST["type"], "id", $_POST["id"]) ?>';
+			parent.parent.frames['frame_node_content'].location.href = '<?= url_for("action", "form", "type", $_POST["type"], "id", $_POST["id"], "lang", $_POST["lang"], "__cms__activate_tab", !is_empty($_CMS["activate_tab"]) ? $_CMS["activate_tab"] : null) ?>';
+			parent.parent.frames['frame_node_footer'].location.href = '<?= url_for("action", "buttons", "type", $_POST["type"], "id", $_POST["id"]) ?>';
+		<? else: ?>
+			parent.parent.close();
+		<? endif ?>
+	<? else: ?>
+		<? if ($_CMS["no_close"]): ?>
+			parent.parent.frames['frame_node_footer'].status_saved();
+		<? else: ?>
+			parent.parent.close();
+		<? endif ?>
+	<? endif ?>
+<? elseif ($_CMS["do"] == "mod"): ?>
+	<? if ($_CMS["no_close"]): ?>
+		parent.parent.frames['frame_node_header'].location.href = '<?= url_for("action", "header", "type", $_POST["type"], "id", $_POST["id"]) ?>';
+		parent.parent.frames['frame_node_content'].location.href = '<?= url_for("action", "form", "type", $_POST["type"], "id", $_POST["id"], "lang", $_POST["lang"], "__cms__activate_tab", !is_empty($_CMS["activate_tab"]) ? $_CMS["activate_tab"] : null) ?>';
+		parent.parent.frames['frame_node_footer'].status_saved();
+	<? else: ?>
+		parent.parent.close();
+	<? endif ?>
+<? endif ?>	
+<? A5::url_for_default("view") ?>
+</script>

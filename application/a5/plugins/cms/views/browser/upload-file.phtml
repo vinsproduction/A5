@@ -1,0 +1,8 @@
+<script type="text/javascript">
+<? if (!is_empty($error_message)): ?>
+	alert('<?= j($error_message) ?>');
+<? else: ?>
+	parent.parent.frames['frame_explorer'].AJAX.update('tree_area', '<?= url_for("@jsescape", true, "@escape", false, "action", "load-files", "root_path", $root_path, "path", $current_folder, "select_file", $file_name) ?>');
+<? endif ?>
+parent.uploader_ready();
+</script>

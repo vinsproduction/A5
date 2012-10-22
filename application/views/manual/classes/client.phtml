@@ -1,0 +1,59 @@
+<ul class="breadcrumb">
+  <li>
+    <a href="/manual">Manual</a> <span class="divider">/</span>
+  </li>
+  <li>
+    <a href="/manual/classes">Classes</a> <span class="divider">/</span>
+  </li>
+  <li>
+    <li class="active">Client</li>
+  </li>
+</ul>
+
+
+<table class="table">
+  <thead>	
+  </thead>
+  <tbody>
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">Client::ip()</pre>		
+		<p>
+		IP клиента, обычный конечный адрес видимый веб-сервером
+		</p>
+		</td>
+	</tr>
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">Client::real_ip()</pre>		
+		<p>
+		Настоящий ip клиента, учитывает возможные заголовки
+	<br/> HTTP_X_FORWARDED_FOR и HTTP_X_REAL_IP
+	<br/> если они есть, иначе возвращает self::ip()
+		</p>
+		</td>
+	</tr>
+	
+	
+	
+	<tr>				
+		<td>	
+		<pre class="prettyprint">Client::browser($type = null)</pre>		
+		<p>
+		<br/> Возвращает имя браузера клиента, его версию или то и то и другое.
+	<br/> Если что-то не удалось определить - вернёт null
+	<br/> Примеры вызова:
+	<br/> Client::browser("name") -> IE
+	<br/> Client::browser("version") -> 6.0
+	<br/> Client::browser() -> array("name" => "IE", "version" => "6.0", "major_version" => "6", "minor_version" => 0)
+	<br/> (http://www.useragentstring.com useragent-ы браузеров для проверки/дополнения условий)
+		</p>
+		</td>
+	</tr>
+
+	
+	
+  </tbody>
+</table>

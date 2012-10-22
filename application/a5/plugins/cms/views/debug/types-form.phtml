@@ -1,0 +1,110 @@
+<? include_view("_submenu") ?>
+
+<div class="wtitle"><div><? if (action() == "types-add"): ?>Создание типа<? else: ?>Редактирование типа<? endif ?></div></div>
+
+<div style="padding: 2px;">
+
+<form method="post">
+<input type="hidden" name="do" value="save">
+
+<table>
+<tr>
+	<td style="text-align: right;">Название:</td>
+	<td><input type="text" name="name" style="width: 200px;"><err></td>
+</tr>
+<tr>
+	<td style="text-align: right;">Название (множ. число):</td>
+	<td><input type="text" name="name_list" style="width: 200px;"><err></td>
+</tr>
+<tr>
+	<td style="text-align: right;">Название таблицы (SQL):</td>
+	<td><input type="text" name="type" style="width: 200px;"><err></td>
+</tr>
+<tr>
+	<td style="text-align: right;">Имя в дереве:</td>
+	<td><input type="text" name="tree_name" style="width: 200px;"><err></td>
+</tr>
+<tr>
+	<td style="text-align: right;">Иконка:</td>
+	<td>
+		<select name="icon">
+		<? foreach (array("folder.gif", "file.gif") as $icon): ?>
+			<option value="<?= h($icon) ?>"><?= h($icon) ?></option>
+		<? endforeach ?>
+		</select><err>
+	</td>
+</tr>
+<tr>
+	<td></td>
+	<td>
+		<div><input type="checkbox" name="is_lang">Языкозависимый<err></div>
+		<? if (action() == "types-edit"): ?>
+			<div>
+				Язык:
+				<select name="use_lang">
+				<option value="">---</option>
+				<? foreach (cms_get_all_languages() as $lang): ?>
+					<option value="<?= h($lang["lang"]) ?>"><?= h($lang["name"]) ?></option>
+				<? endforeach ?>
+				</select><err>
+			</div>
+			<? if ($type_info["is_lang"]): ?>
+				<div class="graytext">(В случае снятия флага языкозависимости останутся данные только от выбранного здесь языка или основного если не выбран)</div>
+			<? else: ?>
+				<div class="graytext">(В случае установки флага языкозависимости, существующим данным будет присвоен выбранный здесь язык. Если язык не будет выбран, то данные будут скопированы на все языки)</div>
+			<? endif ?>
+		<? endif ?>
+	</td>
+</tr>
+<tr>
+	<td></td>
+	<td><input type="checkbox" name="is_hidden_tree">Не показывать в дереве<err></td>
+</tr>
+<tr>
+	<td></td>
+	<td><input type="checkbox" name="is_shared_fields_disabled">Не показывать общие поля (вверху) в форме редактирования<err></td>
+</tr>
+<tr>
+	<td></td>
+	<td><input type="checkbox" name="is_additional_tab_disabled">Не показывать вкладку "Дополнительно" в форме редактирования<err></td>
+</tr>
+<tr>
+	<td style="text-align: right;">Скрытые поля:</td>
+	<td><input type="text" name="disable_fields" style="width: 400px;"><err></td>
+</tr>
+<tr>
+	<td></td>
+	<td><div class="graytext">(Перечислите через запятую имена полей данного типа, которые<br>не должны быть видны в стандартной форме редактирования)</div></td>
+</tr>
+<tr>
+	<td style="text-align: right;">Скрытые дочерние типы:</td>
+	<td><input type="text" name="disable_childs" style="width: 400px;"><err></td>
+</tr>
+<tr>
+	<td></td>
+	<td><div class="graytext">(Перечислите через запятую имена дочерних типов, списки которых<br>не должны отображаться в стандартной форме редактирования)</div></td>
+</tr>
+<tr>
+	<td style="text-align: right;">Имя поля one2many:</td>
+	<td><input type="text" name="one2many_field" style="width: 200px;"><err></td>
+</tr>
+<tr>
+	<td style="text-align: right;"></td>
+	<td><div class="graytext">(Указывается имя поля являющееся типом "объект".<br>У типа не должно быть других <b>обязательных полей не имеющих значения по-умолчанию</b>,<br>иначе если это не так или оставить это поле пустым,<br>то будет использоваться стандартная форма добавления,<br>если же все условия будут соблюдены, то будет использоваться<br>упрощенная форма)</div></td>
+</tr>
+<tr>
+	<td style="text-align: right;">Контроллер:</td>
+	<td><input type="text" name="controller" style="width: 200px;"><err></td>
+</tr>
+<tr>
+	<td style="text-align: right;">Действие:</td>
+	<td><input type="text" name="action" style="width: 200px;"><err></td>
+</tr>
+<tr>
+	<td></td>
+	<td><input type="submit" value="Сохранить"></td>
+</tr>
+</table>
+</form>
+
+</div>

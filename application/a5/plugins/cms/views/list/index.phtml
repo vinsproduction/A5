@@ -1,0 +1,60 @@
+<? if (isset($_GET["callback"])): ?>
+	<script type="text/javascript">
+	function callback_function(id, params)
+	{
+		try
+		{
+			var result = <?= $_GET["callback"] ?>(id, params);
+			if (result !== false) { window.close(); }
+		}
+		catch (e) {}
+	}
+	</script>
+<? endif ?>
+
+<script type="text/javascript">
+var selected_nodes = {};
+</script>
+
+<? $default_type = null ?>
+<? if (count($child_types) > 1): ?>
+	<div id="toolbar" style="position: absolute; width: 100%; top: 0px; left: 0px;">
+		<table class="toolbarset"><tr><td>
+			<? foreach ($child_types as $type): ?>
+				<div id="simple_button_for_<?= h($type) ?>" onclick="simple_button_press(function() { selected_nodes = {}; frames['frame_list'].location.href = '<?= url_for("action", "type-nodes", "id", $_GET["id"], "type", $type, "lang", isset($_GET["lang"]) ? $_GET["lang"] : null) ?>'; }, this);" onmouseover="simple_button_over(this);" onmouseout="simple_button_out(this);" class="simple_button_off"><?= h($types[$type]["name_list"]) ?></div>
+				<? if ($default_type === null) { $default_type = $type; } ?>
+			<? endforeach ?>
+		</td></tr></table>
+	</div>
+<? elseif (count($child_types) == 1): ?>
+	<? $default_type = $child_types[0] ?>
+<? endif ?>
+
+<? if (isset($_GET["child_type"]) && in_array($_GET["child_type"], $child_types)) { $default_type = $_GET["child_type"]; } ?>
+
+<iframe id="list_frame" name="frame_list" src="<?= CMS_PUBLIC_URI ?>/empty.php" frameborder="0" style="position: absolute; left: 0px; top: 0px; border: none; width: 100%;"></iframe>
+
+<script type="text/javascript">
+<!--
+function reposition_frames()
+{
+	var toolbar = $('toolbar');
+	try
+	{
+		$('list_frame').style.height = document.body.offsetHeight - (toolbar ? toolbar.offsetHeight : 0) + 'px';
+		$('list_frame').style.top = (toolbar ? toolbar.offsetHeight : 0) + 'px';
+	} catch (e) {}
+}
+add_event_listener(window, 'load', function() { setTimeout(function() { reposition_frames(); }, 10); });
+add_event_listener(window, 'resize', function() { setTimeout(function() { reposition_frames(); }, 10); });
+<? if (count($child_types) > 1): ?>
+	disable_selection($('toolbar'));
+<? endif ?>
+<? if ($default_type !== null): ?>
+	<? if (count($child_types) > 1): ?>
+		simple_button_press(function() {}, $('simple_button_for_<?= j($default_type) ?>'));
+	<? endif ?>
+	frames['frame_list'].location.href = '<?= url_for("@jsescape", true, "@escape", false, "action", "type-nodes", "id", $_GET["id"], "type", $default_type, "lang", isset($_GET["lang"]) ? $_GET["lang"] : null) ?>'
+<? endif ?>
+//-->
+</script>

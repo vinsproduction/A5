@@ -1,0 +1,48 @@
+<ul class="breadcrumb">
+  <li>
+    <a href="/manual">Manual</a> <span class="divider">/</span>
+  </li>
+  <li>
+    <a href="/manual/classes">Classes</a> <span class="divider">/</span>
+  </li>
+  <li>
+    <li class="active">MailSend</li>
+  </li>
+</ul>
+
+
+<table class="table">
+  <thead>	
+  </thead>
+  <tbody>
+  
+	<tr>				
+		<td>
+		<p>
+Класс для отсылки писем, с возможностью прикрепления аттачей
+Если 8-битных символов нет, письма отсылаются в кодировке "us-ascii"	
+		</p>	
+		<pre class="prettyprint">
+$mail = new MailSend();
+$mail->from("Name Lastname &lt;mail@test.ru&gt;");
+$mail->subject("test");
+$mail->attach("binary_content_of_file", "filename.txt", "text/plain");
+$mail->message("test");
+$mail->send("test@test.ru");
+
+//Для отсылки HTML-письма вызывать нужно метод Message со вторым параметром
+$mail->message("test", true);
+
+//Для вставки рисунка и дальнейшей ссылки на него в самом письме можно использовать
+$mail->attach_internal("img01", "binary_content_of_file", "img.gif", "image/gif");
+//и далее вызвать
+$mail->message("&lt;IMG src=\"cid:img01\"&gt;", true);
+		
+		</pre>		
+		
+		</td>
+	</tr>
+	
+	
+  </tbody>
+</table>

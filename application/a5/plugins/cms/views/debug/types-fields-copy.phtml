@@ -1,0 +1,6 @@
+hide_wait_box();
+<? if ($error_string): ?>
+	alert('Ошибка:\n<?= j($error_string) ?>');
+<? else: ?>
+	alert('Поля успешно скопированы!');
+<? endif ?>

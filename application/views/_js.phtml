@@ -1,0 +1,26 @@
+	
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+	<script src="/bootstrap/js/bootstrap.js"></script>
+	<script type="text/javascript" src="/js/jquery.cookie.js"></script>
+	<script src="/js/redactor/redactor.js"></script>
+	
+	<script src="/js/helpers.js?v=<?= $_REVISION ?>"></script>
+	<script src="/js/popup.js?v=<?= $_REVISION ?>"></script>
+	<script src="/js/common.js?v=<?= $_REVISION ?>"></script>
+	
+	<script type="text/javascript">
+	
+		var A5 = {
+			controller 	: '<?= controller(); ?>',
+			action 		: '<?= action(); ?>',
+			debug		: '<?= DEBUG_MODE; ?>',
+			cookie		: <?= json_encode($_COOKIE); ?>,
+		}
+		
+	</script>
+	
+	
+	<? if( !DEBUG_MODE ):?>
+	<!-- Disable console.log() in browser -->	
+	<script type="text/javascript">disableConsole();</script>
+	<? endif; ?> 

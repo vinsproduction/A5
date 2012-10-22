@@ -1,0 +1,7 @@
+<? if (in_array(action(), array("types-edit", "types-childs", "types-fields", "types-fields-add"))): ?>
+	<table class="toolbarset"><tr><td>
+		<div onclick="location.href = '<?= url_for("action", "types-edit", "id", $_GET["id"]) ?>';" onmouseover="simple_button_over(this);" onmouseout="simple_button_out(this);" class="simple_button_<? if (action() == "types-edit"): ?>on<? else: ?>off<? endif ?>">Общие данные</div>
+		<div onclick="location.href = '<?= url_for("action", "types-childs", "id", $_GET["id"]) ?>';" onmouseover="simple_button_over(this);" onmouseout="simple_button_out(this);" class="simple_button_<? if (action() == "types-childs"): ?>on<? else: ?>off<? endif ?>">Потомки типа</div>
+		<div onclick="location.href = '<?= url_for("action", "types-fields", "id", $_GET["id"]) ?>';" onmouseover="simple_button_over(this);" onmouseout="simple_button_out(this);" class="simple_button_<? if (action() == "types-fields" || action() == "types-fields-add"): ?>on<? else: ?>off<? endif ?>">Поля типа</div>
+	</td></tr></table>
+<? endif ?>

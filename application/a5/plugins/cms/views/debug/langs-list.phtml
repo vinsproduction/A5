@@ -1,0 +1,117 @@
+<script type="text/javascript" src="<?= CMS_PUBLIC_URI ?>/js/standard_list.js"></script>
+
+<script type="text/javascript">
+<? A5::url_for_default("javascript") ?>
+function check_all_buttons()
+{
+	var selected_count = get_object_length(selected_nodes);
+	var tagNames = ['IMG', 'DIV'];
+	for (tagIndex in tagNames)
+	{
+		var tagName = tagNames[tagIndex];
+		var objs = document.getElementsByTagName(tagName);
+		for (var i = 0; i < objs.length; i++)
+		{
+			if (objs[i].id && objs[i].id.indexOf('button_') == 0)
+			{
+				objs[i].className = 'tb_button_off';
+				// здесь нужно писать условия при которых кнопки должны быть активны
+				if (objs[i].id == 'button_create') { continue; }
+				if (objs[i].id == 'button_edit' && selected_count == 1) { continue; }
+				if (objs[i].id == 'button_delete' && selected_count) { continue; }
+				objs[i].className = 'tb_button_disabled';
+			}
+		}
+	}
+}
+
+function tb_button_click(obj)
+{
+	if (obj.className != 'tb_button_disabled')
+	{
+		if (obj.id.indexOf('button_') == 0)
+		{
+			var command_name = obj.id.substr(7);
+			switch (command_name)
+			{
+				case 'create':
+					create_node();
+					break;
+
+				case 'edit':
+					for (i in selected_nodes)
+					{ edit_node(selected_nodes[i]); break; }
+					break;
+
+				case 'delete':
+					if (confirm('Вы уверены что хотите удалить выбранные языки?'))
+					{
+						var params = [];
+						for (i in selected_nodes) { params.push({'nodes[]': selected_nodes[i]}); }
+						AJAX.run('<?= url_for("@overwrite", true, "action", "langs-delete") ?>', params, 'POST');
+					}
+					break;
+
+				default:
+					alert('Unknown button: ' + command_name);
+					break;
+			}
+		}
+	}
+}
+
+function create_node() { location.href = '<?= url_for("action", "langs-add") ?>'; }
+function edit_node(id) { location.href = '<?= url_for("action", "langs-edit") ?>?id=' + id; }
+<? A5::url_for_default("view") ?>
+</script>
+
+<div id="toolbar" style="position: absolute; left: 0px; top: 0px; width: 100%;">
+	<table class="toolbarset"><tr><td>
+		<table class="toolbar_group"><tr>
+			<td class="tb_start"></td>
+			<td><img class="tb_button_disabled" id="button_create" src="<?= CMS_PUBLIC_URI ?>/pics/create_document.gif" title="Добавить" onclick="tb_button_click(this);" onmouseover="tb_button_over(this);" onmouseout="tb_button_out(this);"></td>
+			<td><img class="tb_button_disabled" id="button_edit" src="<?= CMS_PUBLIC_URI ?>/pics/edit_document.gif" title="Редактировать" onclick="tb_button_click(this);" onmouseover="tb_button_over(this);" onmouseout="tb_button_out(this);"></td>
+			<td><img class="tb_button_disabled" id="button_delete" src="<?= CMS_PUBLIC_URI ?>/pics/delete.gif" title="Удалить" onclick="tb_button_click(this);" onmouseover="tb_button_over(this);" onmouseout="tb_button_out(this);"></td>
+		</tr></table>
+	</td></tr></table>
+</div>
+<div id="tree_area" style="position: absolute; left: 0px; top: 29px; width: 100%; overflow: auto;">
+<? if (count($langs)): ?>
+	<table class="list">
+	<tr>
+		<? cms_list_header_field("lang", "Код") ?>
+		<? cms_list_header_field("name", "Название") ?>
+		<? cms_list_header_field("is_default", "Основной?") ?>
+	</tr>
+	<? foreach ($langs as $item): ?>
+		<tr id="node_<?= h($item["lang"]) ?>" onmouseup="clicked_on_node('<?= j($item["lang"]) ?>', event);" ondblclick="double_clicked_on_node('<?= j($item["lang"]) ?>');">
+			<td><?= (!is_empty($item["lang"]) ? h($item["lang"]) : "&nbsp;") ?></td>
+			<td><?= (!is_empty($item["name"]) ? h($item["name"]) : "&nbsp;") ?></td>
+			<td style="text-align: center;"><input type="checkbox" onclick="this.checked = !this.checked" style="margin: -2px; padding: 0px;"<? if ($item["is_default"]): ?> checked<? endif ?>></td>
+		</tr>
+	<? endforeach ?>
+	</table>
+<? else: ?>
+	<table class="wide"><tr><td style="text-align: center;">
+	<p class="graytext">[пусто]</p>
+	</td></tr></table>
+<? endif ?>
+</div>
+
+<script type="text/javascript">
+<!--
+function reposition_frames()
+{
+	try
+	{
+		$('tree_area').style.height = document.body.offsetHeight - $('toolbar').offsetHeight + 'px';
+		$('tree_area').style.top = $('toolbar').offsetHeight + 'px';
+	} catch (e) {}
+}
+add_event_listener(window, 'load', function() { setTimeout(function() { reposition_frames(); }, 10); });
+add_event_listener(window, 'resize', function() { setTimeout(function() { reposition_frames(); }, 10); });
+disable_selection($('toolbar'));
+disable_selection($('tree_area'));
+check_all_buttons();
+//-->
+</script>

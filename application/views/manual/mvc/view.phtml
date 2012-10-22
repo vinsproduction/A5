@@ -1,0 +1,112 @@
+<ul class="breadcrumb">
+  <li>
+    <a href="/manual">Manual</a> <span class="divider">/</span>
+  </li>
+  <li>
+    <a href="/manual/mvc">MVC</a> <span class="divider">/</span>
+  </li>
+  <li>
+    <li class="active">View</li>
+  </li>
+</ul>
+
+<table class="table">
+  <thead>	
+  </thead>
+  <tbody>
+    <tr>
+		<td>	
+		<p><strong>Вставка вьюхи в layout</strong></p>
+		<pre class="prettyprint">include_view($view_name = null, $import_vars = array())</pre>
+		<p>
+		Вызывается после отработки контроллера или вручную во-вьюшках или layouts<br/>
+		Если на вход ничего не передали или null то включает текущую вьюшку<br/>
+		Если передали что-то без "/" в имени то включает вьюшку с таким именем текущего контроллера<br/>
+		Если передали что-то с "/" в имени то включает этот путь относительно VIEWS_DIR<br/>
+		Вторым параметром можно передать массив для импорта различных переменных, которые<br/>
+		будут приоритетнее чем переменные от контроллера.<br/>
+		Примеры вызова:<br/>
+		include_view("index") - просто включит view с данным именем, в которой будут видны все переменные<br/>
+		контроллера<br/>
+		include_view("index", array("products" => $products)) - тоже самое, но во вьюшке будет доступна<br/>
+		переменная $products переданная во втором параметре, она заменит переменную контроллера с таким же именем<br/>
+		если таковая была.
+		</p>
+
+		<p><i>Пример:</i> /layouts/default.phtml</p>		
+		<pre class="prettyprint linenums"><? print htmlentities(
+"<html> 
+<head></head>
+<body>
+  <? include_view() ?>  
+</body>
+</html>"
+		,ENT_QUOTES,"UTF-8"); ?></pre>
+		</td>
+
+    </tr>
+	
+	<tr>
+		<td>	
+		<p><strong>Вставка партиала в layout</strong></p>		
+		<pre class="prettyprint">include_block($view_name = null, $import_vars = array())</pre>
+		<p>
+		Запуск субконтроллера и его субвьюшки<br/>
+		По принципу работы очень похож на на include_view, за исключением того что включается не просто вьюшка но и мини-контроллер для неё<br/>
+		возвращает false и warning если не удалось ничего включить<br/>
+		также поддерживает второй параметр как локальные переменные
+		</p>
+		
+		<p><i>Пример:</i> /layouts/default.phtml</p>			
+		<pre class="prettyprint linenums"><? print htmlentities(
+"<html> 
+<head></head>
+<body>
+  <? include_block('/partials/header') ?>
+</body>
+</html>"
+		,ENT_QUOTES,"UTF-8"); ?></pre>
+		
+		<p><i>Пример:</i> /controllers/partials/header.php</p>			
+		<pre class="prettyprint linenums">
+&lt;?php		
+$test = "Это тестовая переменная";
+?&gt;
+</pre>
+
+		<p><i>Пример:</i> /views/partials/header.phtml</p>			
+		<pre class="prettyprint linenums">&lt;?= $test; ?&gt;</pre>
+	
+	
+		<p><i>Пример стандартного layout</i></p>		
+		<pre class="prettyprint linenums"><? print htmlentities(
+"<html> 
+<head>
+// Всякие meta title, стили, js и тд.
+<? include_block('_metas') ?>
+</head>
+<body>
+  // Шапка
+  <? include_block('/partials/header') ?>
+	
+	// Середина меняется в зависимости от страницы
+	<? include_view() ?>
+  
+  // Подвал
+  <? include_block('/partials/footer') ?>
+</body>
+</html>"
+		,ENT_QUOTES,"UTF-8"); ?></pre>
+	
+	
+		</td>
+		
+		
+    </tr>
+	
+	
+
+
+	
+  </tbody>
+</table>

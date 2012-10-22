@@ -1,0 +1,107 @@
+<ul class="breadcrumb">
+  <li>
+    <li class="active">Manual</li>
+  </li>
+</ul>
+
+
+<? if($tables) :?>
+<div class="alert alert-info">
+     <strong>DB connect:</strong> База данных подключена!
+</div>
+<? else: ?>
+<div class="alert alert-error">
+     <strong>DB connect:</strong> Ошибка соединения с базой данных, проверьте ваш конфиг!
+</div>
+<? endif;?>
+
+<hr>
+<p class="lead">Консоль SQL запросов</p>
+<a href="#" id="btnConsole" class="btn">Открыть консоль</a> Жми: ctrl + ~ 
+</br></br>
+
+
+Консоль можно просматривать только в DEBUG режиме!</br>
+Как включить "DEBUG режим" - смотрите README.txt в корне фреймворка.
+
+<? if(DEBUG_MODE) :?>
+<div class="alert alert-info">
+     <strong>DEBUG режим:</strong> Включен!
+</div>
+<? else: ?>
+<div class="alert alert-error">
+     <strong>DEBUG режим:</strong> Отключен!
+</div>
+<? endif;?>
+
+
+<script type="text/javascript">
+
+	var $console = $('#btnConsole');
+
+	$console.click(function(){
+	
+		$('#console_main_div').fadeToggle(function(){
+		
+		if( $('#console_main_div').is(':visible') ){ $console.html('Закрыть консоль') }else{  $console.html('Открыть консоль') }
+		
+		});
+		
+		return false;
+	});
+
+</script>
+
+
+
+<b>В JS консоле ( Firebug ) доступен объект A5 с вспомогательной информацией по фреймворку!</b>
+
+<hr>
+
+<p class="lead">Иерархия папок фреймворка</p>
+
+<style type="text/css">
+.nav-list li{ margin-top: 10px; }
+</style>
+<ul class="nav nav-list">
+	<li>
+		<i class="icon-folder-open"></i><b>application</b> - папка со всей логикой приложения
+		<ul  class="nav nav-list">
+			<li><i class="icon-folder-open"></i><b>a5</b> - классы и хелперы фреймоворка</li>
+			<li><i class="icon-folder-open"></i><b>classes</b> - классы(модели) конкретного приложения (все файлы в этой папке автоматически инклюдятся в приложение)</li>
+			<li><i class="icon-folder-open"></i><b>config</b> - конфиг приложения ( db config,urlmapping,...)</li>
+			<li><i class="icon-folder-open"></i><b>controllers</b> - логика ( все файлы должны быть с префиксом _controller)
+				<ul  class="nav nav-list">
+				<li><i class="icon-folder-open"></i><b>admin</b> - контроллеры админки</li>
+				<li><i class="icon-folder-open"></i><b>partials</b> - вложенная логика (названия файлов без префикса)</li>
+				<li><i class="icon-folder-open"></i><b>application.php</b> - основной файл настроек приложения</li>
+				</ul>
+			</li>
+			<li><i class="icon-folder-open"></i><b>heplers</b> - тут располагаются файлы - помощники для конкретного приложения</li>
+			<li><i class="icon-folder-open"></i><b>lyaouts</b> - общие скины приложения</li>
+			<li>
+			<i class="icon-folder-open"></i><b>views</b> - вьюхи(отображения) HTML (названия должны совпадать с контроллерами, если не использовать render_view(). Расширение файлов - .phtml)
+				<ul  class="nav nav-list">
+				<li><i class="icon-folder-open"></i><b>admin</b> - вьюхи админки (папки должны называться также как и контроллеры. По умолчанию контроллер смотрит на файл index.phtml. Далее в зависимости от экшена)</li>
+				<li><i class="icon-folder-open"></i><b>partials</b> - вложенные вьюхи</li>
+				</ul>
+			</li>
+		</ul>
+	</li>
+	<li><i class="icon-folder-open"></i><b>htdocs</b> - статика из картинок, стилей и тд. Туда же аплоадятся все файлы(data). По сути она может называться как угодно, хоть www</li>
+
+</ul>
+
+<hr>
+
+<p class="lead">Урлмаппинг</p>
+
+<b>Чтобы понять, как работает урлмаппинг (application/config/urlmapping.ini)</b>,</br>
+ можно поиграться с маршрутом ниже, удаляя с конца части урла:</br>
+
+<pre class="prettyprint">http://<?= $_SERVER['SERVER_NAME'] ?>/admin/test/hello/world/of/warcraft</pre>
+
+
+
+
+	

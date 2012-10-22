@@ -1,0 +1,16 @@
+Что нужно сделать при обновлении версии fckeditor
+=================================================
+
+1) fckeditor/editor/lang/ru.js - добавить переменную
+	DlgBtnBrowseDocumentsCatalog : "Выбрать из дерева документов"
+
+2) fckeditor/editor/dialog/fck_link/fck_link.js - добавить функцию
+	function BrowseDocumentsCatalog()
+	{
+		OpenFileBrowser( FCKConfig.LinkBrowserDocumentsCatalogURL, FCKConfig.LinkBrowserWindowWidth, FCKConfig.LinkBrowserWindowHeight ) ;
+	}
+
+3) fckeditor/editor/dialog/fck_link.html - добавить кнопку
+	<div>
+	<input type="button" value="Select from documents tree" fckLang="DlgBtnBrowseDocumentsCatalog" onclick="BrowseDocumentsCatalog();" />
+	</div>

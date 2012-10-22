@@ -1,0 +1,5 @@
+<? if (!is_empty($error_message)): ?>
+	alert('<?= j($error_message) ?>');
+<? else: ?>
+	location.href = '<?= url_for("action", "explorer", "root_path", $root_path, "path", $current_folder) ?>';
+<? endif ?>

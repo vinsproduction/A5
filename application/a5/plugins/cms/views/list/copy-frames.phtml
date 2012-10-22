@@ -1,0 +1,5 @@
+<frameset rows="21,*,30" border="0" frameborder="0">
+	<frame scrolling="no" noresize src="<?= url_for("action", "copy-header") ?>">
+	<frame name="frame_catalog" scrolling="auto" noresize src="<?= url_for("-controller", "catalog", "action", "tree", "show_full_tree", 1) ?>">
+	<frame scrolling="no" noresize src="<?= url_for("action", "copy-buttons") ?>">
+</frameset>

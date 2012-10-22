@@ -1,0 +1,6 @@
+<? if ($error_string): ?>
+	hide_wait_box();
+	alert('Ошибка:\n<?= j($error_string) ?>');
+<? else: ?>
+	location.href = '<?= url_for("@overwrite", true, "@jsescape", true, "@escape", false, "action", "types-fields") ?>';
+<? endif ?>

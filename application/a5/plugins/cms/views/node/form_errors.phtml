@@ -1,0 +1,53 @@
+<script type="text/javascript">
+
+var tab_number = null;
+try
+{
+	var el = parent.document.getElementById('form_node').elements['<?= j(@$first_field_name) ?>'];
+	if (el)
+	{
+		el = el.parentNode;
+		while (tab_number == null && el)
+		{
+			if (el.tagName && el.tagName == 'DIV' && el.id && el.id.indexOf('tab_') == 0)
+			{ tab_number = el.id.substr(4); break; }
+			el = el.parentNode;
+		}
+	}
+}
+catch (e) {}
+if (tab_number != null) { parent.show_tab(tab_number, parent.document.getElementById('tab_button_' + tab_number)); }
+
+parent.parent.frames['frame_node_footer'].status_clear();
+
+var form_errors = <?= json_encode($form_errors, JSON_FORCE_OBJECT); ?>;
+var form_field_names = <?= json_encode($field_names, JSON_FORCE_OBJECT); ?>;
+
+var labels = parent.document.getElementsByTagName('LABEL');
+var error_message = 'ОШИБКА! В следующих полях:\n\n';
+for (field_name in form_errors)
+{
+	var human_field_name = null;
+	if (form_field_names[field_name]) { human_field_name = form_field_names[field_name]; }
+	else
+	{
+		for (var i = 0; i < labels.length; i++)
+		{
+			if (labels[i].htmlFor == field_name)
+			{ human_field_name = labels[i].innerText; break; }
+		}
+	}
+	if (human_field_name === null) { human_field_name = field_name; }
+	error_message += human_field_name + ': ' + form_errors[field_name] + '\n';
+}
+
+alert(error_message);
+
+try
+{
+	var el = parent.document.getElementById('form_node').elements['<?= j($first_field_name) ?>'];
+	if (el.type != 'hidden' && el.style.display != 'none') el.focus();
+}
+catch (e) {}
+
+</script>

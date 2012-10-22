@@ -1,0 +1,143 @@
+<? include_view("_submenu") ?>
+<div class="wtitle"><div>Создание поля</div></div>
+
+<script type="text/javascript">
+function reinit_form()
+{
+	var frm = $('form_field_add');
+	var ftval = frm.elements['field_type'].options[frm.elements['field_type'].selectedIndex].value;
+
+	$('on_update').style.display = (ftval == 'object' ? '' : 'none');
+	$('on_delete').style.display = (ftval == 'object' ? '' : 'none');
+	$('select_root_name').style.display = (ftval == 'object' ? '' : 'none');
+	$('select_type').style.display = (ftval == 'object' ? '' : 'none');
+	$('select_method').style.display = (ftval == 'object' ? '' : 'none');
+	$('root_folder').style.display = (ftval == 'file' || ftval == 'image' || ftval == 'flash' ? '' : 'none');
+
+	$('fti_fields').style.display = (ftval == 'fti' ? '' : 'none');
+	$('fti_fields_desc').style.display = (ftval == 'fti' ? '' : 'none');
+	if (ftval == 'fti') { frm.elements['fti_fields'].focus(); }
+	$('is_idx').style.display = (ftval == 'fti' ? 'none' : '');
+}
+</script>
+
+<div style="padding: 2px;">
+
+<form method="post" id="form_field_add">
+<input type="hidden" name="do" value="save">
+<table>
+	<tr>
+		<td style="text-align: right;">Название:</td>
+		<td><input type="text" name="name" style="width: 200px;"><err></td>
+	</tr>
+	<tr>
+		<td style="text-align: right;">Название поля (SQL):</td>
+		<td><input type="text" name="field_name" style="width: 200px;"><err></td>
+	</tr>
+	<tr>
+		<td style="text-align: right;">Тип поля:</td>
+		<td>
+			<select onchange="reinit_form();" name="field_type">
+			<option value="">---</option>
+			<? foreach ($field_types as $name => $params): ?>
+				<option value="<?= h($name) ?>"><?= h($params["name"]) ?> [<?= h($params["dbtype"]) ?>]</option>
+			<? endforeach ?>
+			</select><err>
+		</td>
+	</tr>
+	<tr id="on_update" style="display: none;">
+		<td style="text-align: right;">При изменении:</td>
+		<td>
+			<select name="on_update">
+			<option value="">---</option>
+			<? foreach ($foreign_key_actions as $value): ?>
+				<option value="<?= h($value) ?>"><?= h($value)?></option>
+			<? endforeach ?>
+			</select><err>
+		</td>
+	</tr>
+	<tr id="on_delete" style="display: none;">
+		<td style="text-align: right;">При удалении:</td>
+		<td>
+			<select name="on_delete">
+			<option value="">---</option>
+			<? foreach ($foreign_key_actions as $value): ?>
+				<option value="<?= h($value) ?>"><?= h($value)?></option>
+			<? endforeach ?>
+			</select><err>
+		</td>
+	</tr>
+	<tr>
+		<td style="text-align: right;">Размерность:</td>
+		<td><input type="text" name="field_type_length" style="width: 40px;"><err></td>
+	</tr>
+	<tr id="fti_fields" style="display: none;">
+		<td style="text-align: right;">Индексируемые поля:</td>
+		<td><input type="text" name="fti_fields" style="width: 200px;"><err></td>
+	</tr>
+	<tr id="fti_fields_desc" style="display: none;">
+		<td></td>
+		<td><div class="graytext">(вводить через запятую)</div></td>
+	</tr>
+	<tr id="select_root_name" style="display: none;">
+		<td style="text-align: right;">Системное имя корня:</td>
+		<td><input type="text" name="select_root_name" style="width: 200px;"><err></td>
+	</tr>
+	<tr id="select_type" style="display: none;">
+		<td style="text-align: right;">Тип объекта:</td>
+		<td>
+			<select name="select_type">
+			<option value="">---</option>
+			<? foreach ($node_types as $item): ?>
+				<option value="<?= h($item["type"]) ?>"><?= h($item["type"]) ?> (<?= h($item["name"]) ?>)
+			<? endforeach ?>
+			</select><err>
+		</td>
+	</tr>
+	<tr id="select_method" style="display: none;">
+		<td style="text-align: right;">Тип для выбора:</td>
+		<td>
+			<select name="select_method">
+			<option value="">---</option>
+			<? foreach ($select_methods as $method => $name): ?>
+			<option value="<?= h($method) ?>"><?= h($name) ?> (<?= h($method) ?>)</option>
+			<? endforeach ?>
+			</select><err>
+		</td>
+	</tr>
+	<tr id="root_folder" style="display: none;">
+		<td style="text-align: right;">Корневая папка:</td>
+		<td><input type="text" name="root_folder" style="width: 200px;"><err></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><input type="checkbox" name="is_req" id="chk_is_req"><label for="chk_is_req">Обязательное</label><err></td>
+	</tr>
+	<tr id="is_idx">
+		<td></td>
+		<td>
+			<input type="checkbox" name="is_idx" id="chk_is_idx"><label for="chk_is_idx">Создать индекс</label>
+			<input type="checkbox" name="is_ncs" id="chk_is_ncs"><label for="chk_is_ncs">Регистр НЕ важен</label>
+			<input type="checkbox" name="is_uniq" id="chk_is_uniq"><label for="chk_is_uniq">Уникальный</label>
+			<err for="is_idx"><err for="is_uniq">
+		</td>
+	</tr>
+	<tr>
+		<td style="text-align: right;">По-умолчанию (SQL-выражение):</td>
+		<td><input type="text" name="default_value" style="width: 200px;"><err></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><input type="checkbox" name="is_one_more" id="chk_is_one_more"><label for="chk_is_one_more">Добавить ещё одно</label><err></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><input type="submit" value="Добавить"></td>
+	</tr>
+</table>
+
+</form>
+
+</div>
+
+<script type="text/javascript">reinit_form();</script>

@@ -1,0 +1,36 @@
+<?/* Powered by twitter bootstrap [ http://twitter.github.com/bootstrap/ ] */?>
+<!DOCTYPE html>
+<html lang="ru"> 
+<head><? include_block("_metas") ?></head>
+<body>
+	<div class="container">
+	
+		<!--Header-->		
+		<? include_block("/partials/header") ?>	
+		
+		<div class="row-fluid">
+			<div class="span3">
+				<!-- Sidebar left -->
+				<? include_block("/partials/left_sidebar") ?>
+			</div>
+			<div class="span9">
+				<!--Body content-->
+				<? include_view() ?>
+			</div>
+		</div>
+		
+		<!--Footer (c)-->
+		<? include_block("/partials/footer") ?>							
+	</div>
+		
+	<!-- Le javascript
+	 ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<? include_block('_js')?>
+			
+	<!-- Counters -->	
+	<? include_block('_analytics')?>
+	
+</body>
+</html>
+

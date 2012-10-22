@@ -1,0 +1,388 @@
+<script type="text/javascript" src="<?= CMS_PUBLIC_URI ?>/js/standard_list.js"></script>
+
+<script type="text/javascript">
+<? A5::url_for_default("javascript") ?>
+function check_all_buttons()
+{
+	var selected_count = get_object_length(selected_nodes);
+	var tagNames = ['IMG', 'DIV'];
+	for (tagIndex in tagNames)
+	{
+		var tagName = tagNames[tagIndex];
+		var objs = document.getElementsByTagName(tagName);
+		for (var i = 0; i < objs.length; i++)
+		{
+			if (objs[i].id && objs[i].id.indexOf('button_') == 0)
+			{
+				objs[i].className = 'tb_button_off';
+				// здесь нужно писать условия при которых кнопки должны быть активны
+				if (objs[i].id == 'button_create') { continue; }
+				if (objs[i].id == 'button_copy' && selected_count) { continue; }
+				<? if (!isset($_GET["sort_cond"])): ?>
+					if (objs[i].id == 'button_move_up' && selected_count) { continue; }
+					if (objs[i].id == 'button_move_down' && selected_count) { continue; }
+				<? endif ?>
+				if (objs[i].id == 'button_delete' && selected_count) { continue; }
+				objs[i].className = 'tb_button_disabled';
+			}
+		}
+	}
+}
+
+function tb_button_click(obj)
+{
+	if (obj.className != 'tb_button_disabled')
+	{
+		if (obj.id.indexOf('button_') == 0)
+		{
+			var command_name = obj.id.substr(7);
+			switch (command_name)
+			{
+				case 'create':
+					create_node();
+					break;
+
+				case 'copy':
+					copy_fields_dialog();
+					break;
+
+				case 'move_up':
+				case 'move_down':
+					var params = [];
+					for (i in selected_nodes) { params.push({'nodes[]': selected_nodes[i]}); }
+
+					if (command_name == "move_up") { params.push({'direction': 'up'}); }
+					else if (command_name == "move_down") { params.push({'direction': 'down'}); }
+
+					AJAX.run('<?= url_for("@overwrite", true, "action", "types-fields-move") ?>', params, 'POST');
+					break;
+
+				case 'delete':
+					if (confirm('Вы уверены что хотите удалить выбранные поля?'))
+					{
+						var params = [];
+						for (i in selected_nodes) { params.push({'nodes[]': selected_nodes[i]}); }
+						AJAX.run('<?= url_for("@overwrite", true, "action", "types-fields-delete") ?>', params, 'POST');
+					}
+					break;
+
+				default:
+					alert('Unknown button: ' + command_name);
+					break;
+			}
+		}
+	}
+}
+
+function create_node() { location.href = '<?= url_for("action", "types-fields-add", "id", $_GET["id"]) ?>'; }
+
+function copy_fields(dst_type)
+{
+	var params = [];
+	params.push({'destination_type': dst_type});
+	for (i in selected_nodes) { params.push({'nodes[]': selected_nodes[i]}); }
+	copy_fields_dialog_close();
+	show_wait_box();
+ 	AJAX.run('<?= url_for("@overwrite", true, "action", "types-fields-copy") ?>', params, 'POST');
+}
+
+function copy_fields_dialog()
+{
+	var cp = $('copy_dialog');
+	if (cp)
+	{
+		cp.style.display = 'block';
+		var toolbar = $('toolbar');
+		cp.style.top = toolbar.offsetTop + toolbar.offsetHeight + 'px';
+		cp.style.left = '20px';
+	}
+}
+
+function copy_fields_dialog_close()
+{
+	var cp = $('copy_dialog');
+	if (cp) { cp.style.display = 'none'; }
+}
+
+function show_wait_box(text)
+{
+	var wait_box = $('wait_box');
+	if (wait_box)
+	{
+		if (text) { wait_box.innerHTML = '<table class="wide"><tr><td style="text-align: center; vertical-align: middle;">' + text + '</td></tr></table>'; }
+		wait_box.style.visibility = 'visible';
+		wait_box.style.left = Math.round(document.body.clientWidth / 2 - wait_box.clientWidth / 2) + 'px';
+		wait_box.style.top = Math.round(document.body.offsetHeight / 2 - wait_box.offsetHeight / 2) + 'px';
+	}
+}
+
+function hide_wait_box()
+{
+	var wait_box = $('wait_box');
+	if (wait_box) { wait_box.style.visibility = 'hidden'; }
+}
+
+function start_text_edit(id, action, id_prefix)
+{
+	var node = $(id_prefix + id);
+	var src_value = node.getAttribute('node_value');
+	var div = document.createElement('DIV');
+	div.style.marginRight = '2px';
+	var inp = document.createElement('INPUT');
+	inp.type = 'text';
+	inp.value = src_value;
+	inp.style.margin = '0px';
+	inp.style.width = '100%';
+	inp.style.border = '0px';
+	inp.className = 'window-bg';
+	enable_selection($('tree_area'));
+	add_event_listener(inp, 'keyup', function(e)
+	{
+		if (e.keyCode == 27) { inp.value = src_value; inp.blur(); }
+		else if (e.keyCode == 13) { inp.blur(); }
+	});
+	add_event_listener(inp, 'blur', function(e)
+	{
+		disable_selection($('tree_area'));
+		if (inp.value != src_value)
+		{
+			AJAX.run('<?= url_for("@overwrite", true, "action", "types-fields-change") ?>', {'do': action, 'field_id': id, 'param_value': inp.value});
+			show_wait_box();
+		}
+		else { cancel_text_edit(id, id_prefix); }
+	});
+	div.appendChild(inp);
+	node.innerHTML = '';
+	node.appendChild(div);
+	inp.focus();
+	inp.select();
+}
+
+function cancel_text_edit(id, id_prefix)
+{
+	var node = $(id_prefix + id);
+	var src_value = node.getAttribute('node_value');
+	node.innerHTML = src_value;
+}
+
+function start_select_edit(id, action, id_prefix)
+{
+	var node = $(id_prefix + id);
+	var src_value = node.getAttribute('node_value');
+	var sel = document.createElement('SELECT');
+
+	if (action == 'change_field_type')
+	{
+		<? foreach ($field_types as $type_name => $type_info): ?>
+			var opt = new Option();
+			opt.text = '<?= j($type_info["name"] . " [" . text2string($type_info["dbtype"], 30) . "]") ?>';
+			opt.value = '<?= j($type_name) ?>';
+			if (src_value == '<?= j($type_name) ?>') { opt.selected = true; }
+			sel.options[sel.options.length] = opt;
+		<? endforeach ?>
+	}
+
+	if (action == 'change_select_type')
+	{
+		sel.options[sel.options.length] = new Option('---', '');
+		<? foreach ($types_list as $type_name => $type_info): ?>
+			var opt = new Option();
+			opt.text = '<?= j($type_info["type"] . " [" . $type_info["name"] . "]") ?>';
+			opt.value = '<?= j($type_name) ?>';
+			if (src_value == '<?= j($type_name) ?>') { opt.selected = true; }
+			sel.options[sel.options.length] = opt;
+		<? endforeach ?>
+	}
+
+	if (action == 'change_select_method')
+	{
+		sel.options[sel.options.length] = new Option('---', '');
+		<? foreach ($select_methods as $method => $name): ?>
+			var opt = new Option();
+			opt.text = '<?= j($method) ?> (<?= j($name) ?>)';
+			opt.value = '<?= j($method) ?>';
+			if (src_value == '<?= j($method) ?>') { opt.selected = true; }
+			sel.options[sel.options.length] = opt;
+		<? endforeach ?>
+	}
+
+	if (action == 'change_on_update' || action == 'change_on_delete')
+	{
+		sel.options[sel.options.length] = new Option('---', '');
+		<? foreach ($foreign_key_actions as $value): ?>
+			var opt = new Option();
+			opt.text = '<?= j($value) ?>';
+			opt.value = '<?= j($value) ?>';
+			if (src_value == '<?= j($value) ?>') { opt.selected = true; }
+			sel.options[sel.options.length] = opt;
+		<? endforeach ?>
+	}
+
+	add_event_listener(sel, 'keyup', function(e)
+	{
+		var evt = e ? e : window.event;
+		if (evt.keyCode == 27) { sel.blur(); }
+	});
+	add_event_listener(sel, 'blur', function(e)
+	{
+		var evt = e ? e : window.event;
+		cancel_select_edit(id, id_prefix);
+	});
+	add_event_listener(sel, 'change', function(e)
+	{
+		if (sel.options[sel.selectedIndex].value != src_value)
+		{
+			AJAX.run('<?= url_for("@overwrite", true, "action", "types-fields-change") ?>', {'do': action, 'field_id': id, 'param_value': sel.options[sel.selectedIndex].value});
+			show_wait_box();
+		}
+		else { cancel_select_edit(id, id_prefix); }
+	});
+
+	node.innerHTML = '';
+	node.appendChild(sel);
+	sel.focus();
+}
+
+function cancel_select_edit(id, id_prefix)
+{
+	var node = $(id_prefix + id);
+	var src_value = node.getAttribute('node_value');
+	node.innerHTML = src_value;
+}
+<? A5::url_for_default("view") ?>
+</script>
+
+<div id="wait_box" style="visibility: hidden; position: absolute; z-index: 1000; top: 0px; left: 0px; width: 300px; height: 150px; padding: 20px; border: 1px #000000 solid;" class="threedface-bg">
+<table class="wide"><tr><td style="text-align: center; vertical-align: middle;">
+Ждите окончания операции...
+</td></tr></table>
+</div>
+
+<div id="header" style="position: absolute; left: 0px; top: 0px; width: 100%;">
+<? include_view("_submenu") ?>
+<div class="wtitle"><div>Поля типа</div></div>
+</div>
+
+<div id="toolbar" style="position: absolute; left: 0px; top: 51px; width: 100%;">
+	<table class="toolbarset"><tr><td>
+		<table class="toolbar_group"><tr>
+			<td class="tb_start"></td>
+			<td><img class="tb_button_disabled" id="button_create" src="<?= CMS_PUBLIC_URI ?>/pics/create_document.gif" title="Добавить" onclick="tb_button_click(this);" onmouseover="tb_button_over(this);" onmouseout="tb_button_out(this);"></td>
+			<td><img class="tb_button_disabled" id="button_delete" src="<?= CMS_PUBLIC_URI ?>/pics/delete.gif" title="Удалить" onclick="tb_button_click(this);" onmouseover="tb_button_over(this);" onmouseout="tb_button_out(this);"></td>
+		</tr></table>
+		<table class="toolbar_group"><tr>
+			<td class="tb_start"></td>
+			<td><div class="tb_button_disabled" id="button_copy" onclick="tb_button_click(this);" onmouseover="tb_button_over(this);" onmouseout="tb_button_out(this);"><div><img src="<?= CMS_PUBLIC_URI ?>/pics/copy.gif" style="float: left; width: 21px; height: 21px; border: 0px; margin-top: -4px;">Копировать поля</div></div></td>
+			<td><img class="tb_button_disabled" id="button_move_up" src="<?= CMS_PUBLIC_URI ?>/pics/move_up.gif" title="Сдвинуть вверх" onclick="tb_button_click(this);" onmouseover="tb_button_over(this);" onmouseout="tb_button_out(this);"></td>
+			<td><img class="tb_button_disabled" id="button_move_down" src="<?= CMS_PUBLIC_URI ?>/pics/move_down.gif" title="Сдвинуть вниз" onclick="tb_button_click(this);" onmouseover="tb_button_over(this);" onmouseout="tb_button_out(this);"></td>
+		</tr></table>
+	</td></tr></table>
+</div>
+<div id="tree_area" style="position: absolute; left: 0px; top: 80px; width: 100%; overflow: auto;">
+<? if (count($nodes)): ?>
+	<table class="list" id="table_field_list">
+	<tr>
+		<? cms_list_header_field("name", "Название") ?>
+		<? cms_list_header_field("field_name", "Имя поля") ?>
+		<? cms_list_header_field("field_type", "Тип поля") ?>
+		<? cms_list_header_field("field_type_length", "Размерность") ?>
+		<? cms_list_header_field("is_req", "Обязательное?") ?>
+		<? cms_list_header_field("is_idx", "Индексируемое?") ?>
+		<? cms_list_header_field("is_ncs", "Регистр НЕ важен?") ?>
+		<? cms_list_header_field("is_uniq", "Уникальное?") ?>
+		<? cms_list_header_field("default_value", "По-умолчанию") ?>
+		<? cms_list_header_field("select_root_name", "Корень выборки") ?>
+		<? cms_list_header_field("select_type", "Тип для выбора") ?>
+		<? cms_list_header_field("select_method", "Способ выборки") ?>
+		<? cms_list_header_field("on_update", "При изменении") ?>
+		<? cms_list_header_field("on_delete", "При удалении") ?>
+		<? cms_list_header_field("root_folder", "Корневая папка") ?>
+	</tr>
+	<? foreach ($nodes as $item): ?>
+		<tr id="node_<?= h($item["id"]) ?>" onmouseup="clicked_on_node('<?= j($item["id"]) ?>', event);">
+			<td id="node_name_<?= h($item["id"]) ?>" node_value="<?= h($item["name"]) ?>" ondblclick="start_text_edit('<?= h($item["id"]) ?>', 'change_name', 'node_name_');"><?= h($item["name"]) ?></td>
+			<td id="node_field_name_<?= h($item["id"]) ?>" node_value="<?= h($item["field_name"]) ?>" ondblclick="start_text_edit('<?= h($item["id"]) ?>', 'change_field_name', 'node_field_name_');"><?= h($item["field_name"]) ?></td>
+			<td id="node_field_type_<?= h($item["id"]) ?>" node_value="<?= h($item["field_type"]) ?>" ondblclick="start_select_edit('<?= h($item["id"]) ?>', 'change_field_type', 'node_field_type_');"><?= h($item["field_type"]) ?></td>
+			<td style="text-align: right;" id="node_field_type_length_<?= h($item["id"]) ?>" node_value="<?= h($item["field_type_length"]) ?>" ondblclick="start_text_edit('<?= h($item["id"]) ?>', 'change_field_type_length', 'node_field_type_length_');"><?= h($item["field_type_length"]) ?></td>
+			<td style="text-align: center;"><input onclick="AJAX.run('<?= url_for("@overwrite", true, "action", "types-fields-change", "do", "change_is_req", "field_id", $item["id"]) ?>', {'param_value': this.checked ? 1 : 0}); show_wait_box(); return false;" type="checkbox" style="margin: -2px; padding: 0px;"<? if ($item["is_req"]): ?> checked<? endif ?>></td>
+			<td style="text-align: center;"><input onclick="AJAX.run('<?= url_for("@overwrite", true, "action", "types-fields-change", "do", "change_is_idx", "field_id", $item["id"]) ?>', {'param_value': this.checked ? 1 : 0}); show_wait_box(); return false;" type="checkbox" style="margin: -2px; padding: 0px;"<? if ($item["is_idx"]): ?> checked<? endif ?>></td>
+			<td style="text-align: center;"><input onclick="AJAX.run('<?= url_for("@overwrite", true, "action", "types-fields-change", "do", "change_is_ncs", "field_id", $item["id"]) ?>', {'param_value': this.checked ? 1 : 0}); show_wait_box(); return false;" type="checkbox" style="margin: -2px; padding: 0px;"<? if ($item["is_ncs"]): ?> checked<? endif ?>></td>
+			<td style="text-align: center;"><input onclick="AJAX.run('<?= url_for("@overwrite", true, "action", "types-fields-change", "do", "change_is_uniq", "field_id", $item["id"]) ?>', {'param_value': this.checked ? 1 : 0}); show_wait_box(); return false;" type="checkbox" style="margin: -2px; padding: 0px;"<? if ($item["is_uniq"]): ?> checked<? endif ?>></td>
+			<td id="node_default_value_<?= h($item["id"]) ?>" node_value="<?= h($item["default_value"]) ?>" ondblclick="start_text_edit('<?= h($item["id"]) ?>', 'change_default_value', 'node_default_value_');"><?= h($item["default_value"]) ?></td>
+			<td id="node_select_root_name_<?= h($item["id"]) ?>" node_value="<?= h($item["select_root_name"]) ?>" ondblclick="start_text_edit('<?= h($item["id"]) ?>', 'change_select_root_name', 'node_select_root_name_');"><?= h($item["select_root_name"]) ?></td>
+			<td id="node_select_type_<?= h($item["id"]) ?>" node_value="<?= h($item["select_type"]) ?>" ondblclick="start_select_edit('<?= h($item["id"]) ?>', 'change_select_type', 'node_select_type_');"><?= h($item["select_type"]) ?></td>
+			<td id="node_select_method_<?= h($item["id"]) ?>" node_value="<?= h($item["select_method"]) ?>" ondblclick="start_select_edit('<?= h($item["id"]) ?>', 'change_select_method', 'node_select_method_');"><?= h($item["select_method"]) ?></td>
+			<td id="node_on_update_<?= h($item["id"]) ?>" node_value="<?= h($item["on_update"]) ?>" ondblclick="start_select_edit('<?= h($item["id"]) ?>', 'change_on_update', 'node_on_update_');"><?= h($item["on_update"]) ?></td>
+			<td id="node_on_delete_<?= h($item["id"]) ?>" node_value="<?= h($item["on_delete"]) ?>" ondblclick="start_select_edit('<?= h($item["id"]) ?>', 'change_on_delete', 'node_on_delete_');"><?= h($item["on_delete"]) ?></td>
+			<td id="node_root_folder_<?= h($item["id"]) ?>" node_value="<?= h($item["root_folder"]) ?>" ondblclick="start_text_edit('<?= h($item["id"]) ?>', 'change_root_folder', 'node_root_folder_');"><?= h($item["root_folder"]) ?></td>
+		</tr>
+	<? endforeach ?>
+	</table>
+<? else: ?>
+	<table class="wide"><tr><td style="text-align: center;">
+	<p class="graytext">[пусто]</p>
+	</td></tr></table>
+<? endif ?>
+</div>
+
+<div id="copy_dialog" style="position: absolute; top: 0px; left: 0px; display: none;">
+	<table class="toolbarset"><tr><td>
+		<div style="padding: 20px;">
+			<table class="form">
+				<tr>
+					<td>Укажите куда копировать:</td>
+					<td>
+						<select id="select_destination_type">
+							<option value="">---</option>
+							<? foreach ($types_list as $type_id => $type): ?>
+								<option value="<?= h($type_id) ?>"><?= h($type_id) ?> (<?= h($type["name"]) ?>)</option>
+							<? endforeach ?>
+						</select>
+					</td>
+					<td>
+						<input type="button" onclick="
+						var dst = $('select_destination_type');
+						dst = dst.options[dst.selectedIndex].value;
+						if (dst == '') { alert('Выберите тип!'); }
+						else { copy_fields(dst); }
+						" value="Скопировать">
+						<input type="button" onclick="copy_fields_dialog_close();" value="Отмена">
+					</td>
+				</tr>
+			</table>
+		</div>
+	</td></tr></table>
+</div>
+
+<script type="text/javascript">
+<!--
+function reposition_frames()
+{
+	var header = $('header');
+	var toolbar = $('toolbar');
+	var tree_area = $('tree_area');
+
+	try
+	{
+		tree_area.style.height = document.body.offsetHeight - header.offsetHeight - toolbar.offsetHeight + 'px';
+		tree_area.style.top = header.offsetHeight + toolbar.offsetHeight + 'px';
+		toolbar.style.top = header.offsetHeight + 'px';
+		header.style.top = '0px';
+	} catch (e) {}
+}
+
+add_event_listener(window, 'load', function() { setTimeout(function() { reposition_frames(); }, 10); });
+add_event_listener(window, 'resize', function() { setTimeout(function() { reposition_frames(); }, 10); });
+disable_selection($('header'));
+disable_selection($('toolbar'));
+disable_selection($('tree_area'));
+check_all_buttons();
+
+<? if (isset($_GET["selected_nodes"]) && is_array($_GET["selected_nodes"])): ?>
+	<? foreach ($_GET["selected_nodes"] as $node_id): ?>
+		select_node('<?= j($node_id) ?>');
+	<? endforeach ?>
+<? endif ?>
+
+//-->
+</script>

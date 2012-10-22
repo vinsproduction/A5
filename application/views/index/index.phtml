@@ -1,0 +1,37 @@
+ 
+	<!-- Welcome -->
+	<div class="hero-unit">
+		<h1>Welcome!</h1>
+		<p>This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
+		<p><a class="btn btn-primary btn-large">Learn more »</a></p>
+	</div>
+	
+	<!-- carousel -->	
+	<? include_block('/partials/carusel') ?>
+	
+	
+	<!-- content matrix : 3 items in row-->
+	
+	<? if($item_list) :?>
+	<div class="row-fluid">	
+	
+		<? $i=1; foreach($item_list as $item)  :?>
+		
+			<div class="span4">		
+				<h2><?= $item['title'] ?></h2>
+				<a href="#" class="thumbnail">
+				  <img src="<?= $item['image'] ?>" alt="">
+				</a>
+				<p class="item"><?= $item['content'] ?></p>
+				<p><a class="btn" href="#">View details »</a></p>
+			</div>
+
+			<? if($i >= 3) :?>			
+			</div><div class="row-fluid">				
+			<? $i=0; endif; ?>
+		
+		<? $i++; endforeach;?>
+
+	</div>	
+	<? endif;?>	
+	

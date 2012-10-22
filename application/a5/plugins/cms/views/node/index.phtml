@@ -1,0 +1,87 @@
+<? /* Если добавляем ноду, но тип неизвестен - ресайзим окно в соответствии с размерами окна выбора типа */ ?>
+<script type="text/javascript" src="<?= CMS_PUBLIC_URI ?>/js/misc.js"></script>
+
+<script type="text/javascript">
+<? A5::url_for_default("javascript") ?>
+<? if (isset($_GET["parent_id"]) && !isset($_GET["type"])): ?>
+	var width = Math.round(screen.availWidth * 0.3);
+	var height = Math.round(screen.availHeight * 0.3);
+<? else: ?>
+	var width = Math.round(screen.availWidth * 0.8);
+	var height = Math.round(screen.availHeight * 0.8);
+<? endif ?>
+window.resizeTo(width, height);
+
+<? if (isset($_GET["type"])): ?>
+	function submit_form()
+	{
+		var buttons_form = frames['frame_node_footer'].$('form_buttons');
+		if (buttons_form)
+		{
+			var button_submit = buttons_form.elements['button_submit'];
+			if (button_submit) { button_submit.click(); }
+		}
+	}
+
+	function cancel_form()
+	{
+		var buttons_form = frames['frame_node_footer'].$('form_buttons');
+		if (buttons_form)
+		{
+			var button_cancel = buttons_form.elements['button_cancel'];
+			if (button_cancel) { button_cancel.click(); }
+		}
+	}
+
+	function load_node_edit_form(id)
+	{
+		var header_url = append_url_param('<?= url_for("action", "header", "type", $_GET["type"]) ?>', 'id', id);
+		var content_url = append_url_param('<?= url_for("action", "form", "type", $_GET["type"]) ?>', 'id', id);
+		var footer_url = append_url_param('<?= url_for("action", "buttons", "type", $_GET["type"]) ?>', 'id', id);
+
+		var node_form = frames['frame_node_content'].$('form_node');
+		var buttons_form = frames['frame_node_footer'].$('form_buttons');
+
+		if (node_form && buttons_form)
+		{
+			if (node_form.elements['lang'])
+			{
+				header_url = append_url_param(header_url, 'lang', node_form.elements['lang'].value);
+				content_url = append_url_param(content_url, 'lang', node_form.elements['lang'].value);
+				footer_url = append_url_param(footer_url, 'lang', node_form.elements['lang'].value);
+			}
+
+			if (buttons_form.elements['chk_no_close']) { footer_url = append_url_param(footer_url, 'chk_no_close', buttons_form.elements['chk_no_close'].checked ? '1' : ''); }
+			if (buttons_form.elements['chk_one_more']) { footer_url = append_url_param(footer_url, 'chk_one_more', buttons_form.elements['chk_one_more'].checked ? '1' : ''); }
+			if (buttons_form.elements['chk_no_clean']) { footer_url = append_url_param(footer_url, 'chk_no_clean', buttons_form.elements['chk_no_clean'].checked ? '1' : ''); }
+		}
+
+		frames['frame_node_header'].location.href = header_url;
+		frames['frame_node_content'].location.href = content_url;
+		frames['frame_node_footer'].location.href = footer_url;
+	}
+<? endif ?>
+<? A5::url_for_default("view") ?>
+</script>
+
+<frameset rows="21,*,30" border="0" frameborder="0">
+<? if (isset($_GET["id"])):?>
+	<frame name="frame_node_header" scrolling="no" noresize src="<?= url_for("action", "header", "type", $_GET["type"], "id", $_GET["id"]) ?>">
+	<frame name="frame_node_content" scrolling="auto" noresize src="<?= url_for("action", "form", "type", $_GET["type"], "id", $_GET["id"], "lang", isset($_GET["lang"]) ? $_GET["lang"] : null) ?>">
+	<frame name="frame_node_footer" scrolling="no" noresize src="<?= url_for("action", "buttons", "type", $_GET["type"], "id", $_GET["id"], "lang", isset($_GET["lang"]) ? $_GET["lang"] : null) ?>">
+<? elseif (isset($_GET["type"])): ?>
+	<? if ($is_one2many): ?>
+		<frame name="frame_node_header" scrolling="no" noresize src="<?= url_for("action", "header-one2many", "type", $_GET["type"], "parent_id", $_GET["parent_id"]) ?>">
+		<frame name="frame_node_content" scrolling="auto" noresize src="<?= url_for("action", "form-one2many", "type", $_GET["type"], "parent_id", $_GET["parent_id"], "lang", isset($_GET["lang"]) ? $_GET["lang"] : null) ?>">
+		<frame name="frame_node_footer" scrolling="no" noresize src="<?= url_for("action", "buttons-one2many", "type", $_GET["type"], "parent_id", $_GET["parent_id"]) ?>">
+	<? else: ?>
+		<frame name="frame_node_header" scrolling="no" noresize src="<?= url_for("action", "header", "type", $_GET["type"], "parent_id", $_GET["parent_id"]) ?>">
+		<frame name="frame_node_content" scrolling="auto" noresize src="<?= url_for("action", "form", "type", $_GET["type"], "parent_id", $_GET["parent_id"], "lang", isset($_GET["lang"]) ? $_GET["lang"] : null) ?>">
+		<frame name="frame_node_footer" scrolling="no" noresize src="<?= url_for("action", "buttons", "type", $_GET["type"], "parent_id", $_GET["parent_id"]) ?>">
+	<? endif ?>
+<? else: ?>
+	<frame scrolling="no" noresize src="<?= url_for("action", "select-header") ?>">
+	<frame scrolling="auto" noresize src="<?= url_for("action", "select-form", "parent_id", $_GET["parent_id"], "lang", isset($_GET["lang"]) ? $_GET["lang"] : null) ?>">
+	<frame scrolling="no" noresize src="<?= url_for("action", "select-buttons") ?>">
+<? endif ?>
+</frameset>

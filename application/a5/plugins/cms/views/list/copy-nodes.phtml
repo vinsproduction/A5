@@ -1,0 +1,40 @@
+<? if (!is_empty($error_message)): ?>
+	alert('ОШИБКА!\n<?= j($error_message) ?>');
+	status_clear();
+<? else: ?>
+	status_saved();
+	try
+	{
+		var copy_catalog = parent.frames['frame_catalog'];
+		var frame_list = parent.opener.parent.frames['frame_list'];
+		var frame_catalog = parent.opener.parent.parent.frames['frame_catalog'];
+	}
+	catch (e) {}
+
+	var nodes = [];
+	var load_node_childs = [];
+	<? foreach ($_POST["copy_to"] as $node_id): ?>
+		nodes.push('<?= j($node_id) ?>');
+		load_node_childs.push('<?= j($node_id) ?>');
+		<? $parent_id = db_select_cell("SELECT parent_id FROM cms_nodes WHERE id = ?i", $node_id) ?>
+		<? if ($parent_id !== false): ?>
+			load_node_childs.push('<?= j($parent_id) ?>');
+		<? endif ?>
+	<? endforeach ?>
+	
+	if (frame_catalog) { frame_catalog.expand_tree(nodes, {'node_inclusive': true, 'load_node_childs': load_node_childs}); }
+
+	if (frame_list)
+	{	
+		<? foreach ($_POST["copy_to"] as $node_id): ?>
+			if (frame_list.list_parent_id == '<?= j($node_id) ?>')
+			{ frame_list.reload_list(); }
+		<? endforeach ?>
+	}
+	
+	<? if (@$_POST["is_no_close"]): ?>
+		if (copy_catalog) { copy_catalog.expand_tree(nodes, {'node_inclusive': true, 'load_node_childs': load_node_childs}); }
+	<? else: ?>
+		parent.close();
+	<? endif ?>
+<? endif ?>

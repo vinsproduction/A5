@@ -1,0 +1,113 @@
+<? if (count($items_list)): ?>
+	<? if ($explorer_list_style == 0): ?>
+		<? foreach ($items_list as $item): ?>
+			<table style="display: inline-block; float: left; width: 120px; margin: 5px;">
+				<tr>
+					<td style="text-align: center;" id="node_content_<?= h($item["name"]) ?>">
+						<? if ($item["type"] == "folder"): ?>
+							<div id="node_icon_<?= h($item["name"]) ?>" onmouseup="clicked_on_node('<?= h($item["name"]) ?>', event);" ondblclick="location.href = '<?= url_for("root_path", $root_path, "path", $current_folder . "/" . $item["name"]) ?>';"><img src="<?= url_for($item["icon32"]) ?>" style="margin: 16px; width: 32px; height: 32px;" border="0" alt=""></div>
+							<div onmouseup="clicked_on_node('<?= h($item["name"]) ?>', event);" ondblclick="location.href = '<?= url_for("root_path", $root_path, "path", $current_folder . "/" . $item["name"]) ?>';" onmouseover="this.style.color = '#ff0000';" onmouseout="this.style.color = '';" class="not_selected" style="text-align: center; cursor: default; width: 110px; overflow: hidden;">
+								<div id="node_name_<?= h($item["name"]) ?>" node_type="folder" node_name="<?= h($item["name"])?>" node_url="<?= h($item["url"]) ?>" node_full_url="<?= url_for($item["url"]) ?>" title="<?= h($item["name"])?>" style="white-space: nowrap;"><?= h($item["name"]) ?></div>
+								<div style="color: #888888;">Папок/Файлов: <?= h($item["folders_count"]) ?>/<?= h($item["files_count"]) ?></div>
+							</div>
+						<? elseif ($item["type"] == "file"): ?>
+							<?
+							$params = array();
+							$img_is_flash = false;
+							$img = false;
+							if (in_array(ltrim(get_file_extension($item["path"]), "."), $images_extensions))
+							{
+								$img = @getimagesize($item["path"]);
+								if ($img !== false)
+								{
+									$img_is_flash = ($img[2] == IMAGETYPE_SWF || $img[2] == IMAGETYPE_SWC);
+									$params[] = "'width': '" . j($img[0]) . "'";
+									$params[] = "'height': '" . j($img[1]) . "'";
+								}
+							}
+							$params[] = "'size': '" . j($item["size"]) . "'";
+							$params[] = "'human_size': '" . j(human_size($item["size"])) . "'";
+							$params[] = "'name': '" . j($item["name"]) . "'";
+							$params = implode(",", $params);
+							?>
+							<div id="node_icon_<?= h($item["name"]) ?>" onmouseup="clicked_on_node('<?= h($item["name"]) ?>', event);" ondblclick="call_callback('<?= hj($item["url"]) ?>', {<?= h($params) ?>});">
+								<?
+								if ($img && !$img_is_flash) { $img_url = url_for("action", "thumb", "root_path", $root_path, "parent_folder", $current_folder, "img_name", $item["name"], "rnd", random()); }
+								else { $img_url = url_for($item["icon32"]); }
+								?>
+								<div style="width: 120px; height: 64px; background: url(<?= $img_url ?>) no-repeat center center"><span></span></div>
+							</div>
+							<div id="node_content_<?= h($item["name"]) ?>" onmouseup="clicked_on_node('<?= h($item["name"]) ?>', event);" ondblclick="call_callback('<?= hj($item["url"]) ?>', {<?= h($params) ?>});" onmouseover="this.style.color = '#ff0000';" onmouseout="this.style.color = '';" class="not_selected" style="cursor: default; width: 110px; overflow: hidden">
+								<div id="node_name_<?= h($item["name"]) ?>" node_type="file" node_name="<?= h($item["name"])?>" node_url="<?= h($item["url"]) ?>" node_full_url="<?= url_for($item["url"]) ?>" title="<?= h($item["name"])?>" style="white-space: nowrap;"><?= h($item["name"]) ?></div>
+								<div style="color: #888888;">
+									<?= $item["size"] !== null ? human_size($item["size"]) : "&nbsp;" ?>
+									<? if ($img): ?>
+										(<?= h($img[0]) ?>x<?= h($img[1]) ?>)
+									<? endif ?>
+								</div>
+								<div style="color: #888888; font-size: 10px;"><?= date("d/m/Y H:i:s", $item["mtime"]) ?></div>
+							</div>
+						<? endif ?>
+					</td>
+				</tr>
+			</table>
+		<? endforeach ?>
+	<? else: ?>
+		<table class="browser">
+		<? foreach ($items_list as $item): ?>
+			<tr valign="top">
+				<td><div style="width: 2px;"></div></td>
+				<? if ($item["type"] == "folder"): ?>
+					<td id="node_icon_<?= h($item["name"]) ?>" onmouseup="clicked_on_node('<?= h($item["name"]) ?>', event);" ondblclick="location.href = '<?= url_for("root_path", $root_path, "path", $current_folder . "/" . $item["name"]) ?>';" style="padding-right: 2px;"><img src="<?= url_for($item["icon"]) ?>" width="16" height="16" border="0" alt=""></td>
+					<td id="node_content_<?= h($item["name"]) ?>" onmouseup="clicked_on_node('<?= h($item["name"]) ?>', event);" ondblclick="location.href = '<?= url_for("root_path", $root_path, "path", $current_folder . "/" . $item["name"]) ?>';" onmouseover="this.style.color = '#ff0000';" onmouseout="this.style.color = '';" class="not_selected" style="cursor: default; white-space: nowrap;">
+						<span id="node_name_<?= h($item["name"]) ?>" node_type="folder" node_name="<?= h($item["name"])?>" node_url="<?= h($item["url"]) ?>" node_full_url="<?= url_for($item["url"]) ?>"><?= h($item["name"]) ?></span>
+					</td>
+				<? elseif ($item["type"] == "file"): ?>
+					<?
+					$params = array();
+					$img = false;
+					if (in_array(ltrim(get_file_extension($item["path"]), "."), $images_extensions))
+					{
+						$img = @getimagesize($item["path"]);
+						if ($img !== false)
+						{
+							$params[] = "'width': '" . j($img[0]) . "'";
+							$params[] = "'height': '" . j($img[1]) . "'";
+						}
+					}
+					$params[] = "'size': '" . j($item["size"]) . "'";
+					$params[] = "'human_size': '" . j(human_size($item["size"])) . "'";
+					$params[] = "'name': '" . j($item["name"]) . "'";
+					$params = implode(",", $params);
+					?>
+					<td id="node_icon_<?= h($item["name"]) ?>" onmouseup="clicked_on_node('<?= h($item["name"]) ?>', event);" ondblclick="call_callback('<?= hj($item["url"]) ?>', {<?= h($params) ?>});" style="padding-right: 2px;"><img src="<?= url_for($item["icon"]) ?>" width="16" height="16" border="0" alt=""></td>
+					<td id="node_content_<?= h($item["name"]) ?>" onmouseup="clicked_on_node('<?= h($item["name"]) ?>', event);" ondblclick="call_callback('<?= hj($item["url"]) ?>', {<?= h($params) ?>});" onmouseover="this.style.color = '#ff0000';" onmouseout="this.style.color = '';" class="not_selected" style="cursor: default; white-space: nowrap;">
+						<span id="node_name_<?= h($item["name"]) ?>" node_type="file" node_name="<?= h($item["name"])?>" node_url="<?= h($item["url"]) ?>" node_full_url="<?= url_for($item["url"]) ?>"><?= h($item["name"]) ?></span>
+					</td>
+				<? endif ?>
+				<td><div style="width: 10px;"></div></td>
+				<td><?= $item["size"] !== null ? human_size($item["size"]) : "&nbsp;" ?></td>
+				<td><div style="width: 10px;"></div></td>
+				<td>
+					<? if ($item["type"] == "folder"): ?>
+						Папок/Файлов: <?= h($item["folders_count"]) ?>/<?= h($item["files_count"]) ?>
+					<? elseif ($img): ?>
+						Картинка <? if (!is_empty($item["ext"])): ?>&quot;<?= h(strtoupper($item["ext"])) ?>&quot;<? endif ?> (<?= h($img[0]) ?>x<?= h($img[1]) ?>)
+					<? else: ?>
+						Файл <? if (!is_empty($item["ext"])): ?>&quot;<?= h(strtoupper($item["ext"])) ?>&quot;<? endif ?>
+					<? endif ?>
+				</td>
+				<td><div style="width: 10px;"></div></td>
+				<td><?= date("d.m.Y H:i:s", $item["mtime"]) ?></td>
+			</tr>
+		<? endforeach ?>
+		</table>
+	<? endif ?>
+<? else: ?>
+	<div style="color: #888888; padding: 5px;">[папка пуста]</div>
+<? endif ?>
+<? if (@!is_empty($_GET["select_file"])): ?>
+	<script type="text/javascript">
+	highlight_node('<?= j($_GET["select_file"]) ?>');
+	</script>
+<? endif ?>

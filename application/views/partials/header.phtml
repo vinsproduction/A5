@@ -1,0 +1,96 @@
+
+	<div class="navbar">
+	  <div class="navbar-inner">
+		<div class="container">
+
+			<!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</a>
+			
+			<ul class="nav pull-left">				
+				<li><a class="brand" href="/">YE-bay</a></li>				  								  
+			</ul>
+		
+			<!-- Everything you want hidden at 940px or less, place within here -->
+			<div class="nav-collapse">				
+				
+				<form class="navbar-search pull-right" action="">
+					<input type="text" class="search-query span2" placeholder="Поиск по сайту">
+				</form>
+			
+				<ul class="nav pull-right">
+					<li class="navbar-text">8 (495) 586-30-01</li>
+					<li class="divider-vertical"></li>
+					<li class="dropdown">
+						  <a data-toggle="dropdown" class="dropdown-toggle" href="#">О сайте <b class="caret"></b></a>
+						  <ul class="dropdown-menu">
+							<li><a href="#">Меню1</a></li>
+							<li><a href="#">Меню2</a></li>
+							<li><a href="#">Меню3</a></li>
+							<li><a href="#">Меню4</a></li>
+							<li class="#"></li>
+							<li><a href="#">Прочее</a></li>                       
+						  </ul>
+					  </li>					
+					<? if($_AUTH) :?>
+					<li class="divider-vertical"></li>	
+					<li><a href="#">Покупки <span class="badge">1</span></a></li>
+					<? endif; ?>
+					<li class="divider-vertical"></li>
+					<li class="dropdown">				
+						<a data-toggle="dropdown" class="dropdown-toggle" href="#"><?= ($_AUTH) ? $_AUTH['email'] : 'Ваш аккаунт' ?><b class="caret"></b></a>					
+						<ul class="dropdown-menu">
+						<? if($_AUTH) :?>
+							<li><a href="#">Профиль</a></li>
+							<li class="divider"></li>
+							<li><a href="/auth/logout">Выход</a></li>
+						</ul>
+						<? else: ?>
+							<li><a href="/auth/registration">Регистрация</a></li>
+							<li class="divider"></li>
+							<li><a href="/auth/login">Вход</a></li>
+						<? endif; ?>
+					</li>					
+				</ul>
+			</div>
+		</div>
+	  </div>
+	</div> 
+	<?/*
+		<div class="subnav subnav-fixed">
+		<ul class="nav nav-pills">
+		  <li class="dropdown">
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#">Buttons <b class="caret"></b></a>
+			<ul class="dropdown-menu">
+			  <li class=""><a href="#buttonGroups">Button groups</a></li>
+			  <li class=""><a href="#buttonDropdowns">Button dropdowns</a></li>
+			</ul>
+		  </li>
+		  <li class="dropdown active">
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#">Navigation <b class="caret"></b></a>
+			<ul class="dropdown-menu">
+			  <li class=""><a href="#navs">Nav, tabs, pills</a></li>
+			  <li class="active"><a href="#navbar">Navbar</a></li>
+			  <li><a href="#breadcrumbs">Breadcrumbs</a></li>
+			  <li><a href="#pagination">Pagination</a></li>
+			</ul>
+		  </li>
+		  <li><a href="#labels">Labels</a></li>
+		  <li><a href="#badges">Badges</a></li>
+		  <li><a href="#typography">Typography</a></li>
+		  <li><a href="#thumbnails">Thumbnails</a></li>
+		  <li><a href="#alerts">Alerts</a></li>
+		  <li><a href="#progress">Progress bars</a></li>
+		  <li><a href="#misc">Miscellaneous</a></li>
+		</ul>
+	  </div>
+	*/?>
+	<?/*
+	<div class="page-header">
+	  <h1>Магазин хуёмоё работает круглосуточно</h1>
+	</div>
+	*/?>
+	

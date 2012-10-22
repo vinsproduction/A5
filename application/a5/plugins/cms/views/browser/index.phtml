@@ -1,0 +1,78 @@
+<? if (isset($_GET["callback"])): ?>
+	<script type="text/javascript">
+	function callback_function(id, params)
+	{
+		try
+		{
+			var result = <?= $_GET["callback"] ?>(id, params);
+			if (result !== false) { window.close(); }
+		}
+		catch (e) {}
+	}
+	</script>
+<? elseif (isset($_GET["fck_callback"])): ?>
+	<script type="text/javascript">
+	<? if ($_GET["fck_callback"] == "image" || $_GET["fck_callback"] == "flash"): ?>
+		function callback_function(url, params)
+		{
+			var use_ckeditor = false;
+
+			if (use_ckeditor)
+			{
+				opener.CKEDITOR.tools.callFunction('<?= j(@$_GET["CKEditorFuncNum"]) ?>', url, function()
+				{
+					var dialog = this.getDialog();
+					if (dialog.getName() == 'image')
+					{
+						dialog.setValueOf('info', 'txtWidth', params['width']);
+						dialog.setValueOf('info', 'txtHeight', params['height']);
+					}
+					if (dialog.getName() == 'flash')
+					{
+						dialog.setValueOf('info', 'width', params['width']);
+						dialog.setValueOf('info', 'height', params['height']);
+					}
+					// Uncomment if you want CKEditor to ignore url parameter
+					// return false;
+				});
+			}
+			else
+			{
+				try { opener.SetUrl(url, params['width'], params['height'], ''); } catch (e) {}
+			}
+
+			window.close();
+		}
+	<? elseif ($_GET["fck_callback"] == "link"): ?>
+		function callback_function(url, params)
+		{
+			var use_ckeditor = false;
+
+			if (use_ckeditor)
+			{
+				opener.CKEDITOR.tools.callFunction('<?= j(@$_GET["CKEditorFuncNum"]) ?>', url, function()
+				{
+					var dialog = this.getDialog();
+					if (dialog.getName() == 'link') { dialog.setValueOf('info', 'protocol', ''); }
+					// Uncomment if you want CKEditor to ignore url parameter
+					// return false;
+				});
+			}
+			else
+			{
+				try
+				{
+					opener.SetUrl(url);
+					opener.document.getElementById('cmbLinkProtocol').options[4].selected = true;
+				} catch (e) {}
+			}
+
+			window.close();
+		}
+	<? endif ?>
+	</script>
+<? endif ?>
+<frameset border="5" frameborder="1" rows="*,50">
+	<frame scrolling="no" name="frame_explorer" src="<?= url_for("-controller", "browser", "action", "explorer", "root_path", isset($_GET["root_path"]) ? $_GET["root_path"] : null, "find_path", isset($_GET["find_path"]) ? $_GET["find_path"] : null) ?>">
+	<frame scrolling="no" noresize name="frame_upload" src="<?= url_for("-controller", "browser", "action", "uploader", "root_path", isset($_GET["root_path"]) ? $_GET["root_path"] : null, "find_path", isset($_GET["find_path"]) ? $_GET["find_path"] : null) ?>">
+</frameset>
