@@ -16,22 +16,6 @@ $uri_3 = isset($_GET['uri_1']) ? $_GET['uri_1'] : false;
 if(action() == 'index'){
 	
 
-	//varexp(PUBLIC_DIR);
-	
-	/*
-	include('ssh/Net/SSH2.php');
-
-	$ssh = new Net_SSH2('192.168.0.80:10000');
-	
-	exit;
-	if (!$ssh->login('root', 'rfghbc')) {
-		exit('Login Failed');
-	}
-
-	echo $ssh->exec('pwd');
-	echo $ssh->exec('ls -la');
-	*/
-
 	$tables = db_select_cell("SELECT 1 FROM information_schema.tables LIMIT 1");
 
 	render_view('/manual/index');	
