@@ -1,4 +1,4 @@
 A5
 ==
 
-A5 PHP Framework + js helpers + Twitter bootstrap
+PHP Framework + js helpers + Twitter bootstrap
