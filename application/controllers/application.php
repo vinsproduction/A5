@@ -31,7 +31,7 @@ $_PAGE = array(
 );
 
 
-// Метас для соц сетей
+// Мета для соц сетей
 $_PAGE["metas"] = '
 <link rel="image_src" href="http://'.$_SERVER['SERVER_NAME'].'/img/apple-touch-icon-144-precomposed.png" />
 <meta property="og:image" content="http://'.$_SERVER['SERVER_NAME'].'/img/apple-touch-icon-144-precomposed.png" />			
