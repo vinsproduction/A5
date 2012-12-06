@@ -1,12 +1,20 @@
 	
-	<script src="http://code.jquery.com/jquery-latest.js"></script>
-	<script src="/bootstrap/js/bootstrap.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+	<script type="text/javascript" src="/bootstrap/js/bootstrap.js"></script>
 	<script type="text/javascript" src="/js/jquery.cookie.js"></script>
-	<script src="/js/redactor/redactor.js"></script>
+	<script type="text/javascript" src="/js/redactor/redactor.js"></script>
 	
-	<script src="/js/helpers.js?v=<?= $_REVISION ?>"></script>
-	<script src="/js/popup.js?v=<?= $_REVISION ?>"></script>
-	<script src="/js/common.js?v=<?= $_REVISION ?>"></script>
+	<script type="text/javascript" src="/js/helpers.js"></script>
+	<script type="text/javascript" src="/js/common.js"></script>
+	
+	<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+		
+	<!--[if lt IE 8]>
+	<script src="/js/json2.js"></script>
+	<![endif]-->
 	
 	<script type="text/javascript">
 	
@@ -15,7 +23,11 @@
 			action 		: '<?= action(); ?>',
 			debug		: '<?= DEBUG_MODE; ?>',
 			cookie		: <?= json_encode($_COOKIE); ?>,
+			auth		: {}
 		}
+		
+		A5.auth.id 		= <?= ($_AUTH) ? $_AUTH['id'] : 0; ?>;
+		A5.auth.admin 	= <?= ($_AUTH) ? $_AUTH['admin'] : 0; ?>;
 		
 	</script>
 	

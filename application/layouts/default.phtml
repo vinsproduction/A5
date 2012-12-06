@@ -1,36 +1,46 @@
 <?/* Powered by twitter bootstrap [ http://twitter.github.com/bootstrap/ ] */?>
 <!DOCTYPE html>
 <html lang="ru"> 
-<head><? include_block("_metas") ?></head>
+<head>
+<? include_block("_metas") ?>
+<? include_block("_css") ?>
+<? include_block('_js')?>
+</head>
 <body>
 	<div class="container">
 	
 		<!--Header-->		
-		<? include_block("/partials/header") ?>	
+			<? include_block("/partials/header") ?>	
+		<!--/Header-->
 		
+		<!--Body-->
 		<div class="row-fluid">
 			<div class="span3">
 				<!-- Sidebar left -->
-				<? include_block("/partials/left_sidebar") ?>
+					<? include_block("/partials/left_sidebar") ?>
+				<!-- /Sidebar left -->
 			</div>
 			<div class="span9">
-				<!--Body content-->
-				<? include_view() ?>
+				<!-- Content -->
+					<? include_view() ?>
+				<!-- /Content -->
 			</div>
 		</div>
+		<!--/Body-->
 		
-		<!--Footer (c)-->
-		<? include_block("/partials/footer") ?>							
+		<!--Footer-->
+			<? include_block("/partials/footer") ?>
+		<!--/Footer-->	
+		
 	</div>
-		
-	<!-- Le javascript
-	 ================================================== -->
-	<!-- Placed at the end of the document so the pages load faster -->
-	<? include_block('_js')?>
-			
-	<!-- Counters -->	
-	<? include_block('_analytics')?>
 	
+	<!-- Popups -->	
+		<? include_block("_popups") ?>	
+	<!-- /Popups -->	
+	
+	<!-- Counters -->	
+		<? include_block('_analytics')?>
+	<!-- /Counters -->	
 </body>
 </html>
 

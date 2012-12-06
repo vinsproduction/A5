@@ -66,6 +66,8 @@ class ImageClass
 		}
 		
 		
+		$uploaded["unicname"]  = self::generateUniqueId();
+		
 		$uploaded["ext"]  = strtolower(pathinfo($uploaded["name"], PATHINFO_EXTENSION));
 
 		$uploaded["data"] = @file_get_contents($uploaded["file"]);
@@ -174,11 +176,10 @@ class ImageClass
         {
 
             //Если не передаем название файла - юзать уникальный 
-			$filename  = ($unicname) ? $unicname : self::generateUniqueId().'.'.$this->ext;
+			$filename  = ($unicname) ? $unicname : self::generateUniqueId();
 
-			$this->pathToSave = $path . '/' . $filename;
-		
-
+			$this->pathToSave = $path . '/' . $filename.'.'.$this->ext;
+	
             // Если задействован GD      
             if(is_resource($this->_image))
             {
@@ -1288,7 +1289,9 @@ class ImageClass
     {
         switch (strtolower($extension))
         {
+
             case 'jpg':
+				
             case 'jpeg':
                 // Save a JPG file
                 $save = 'imagejpeg';

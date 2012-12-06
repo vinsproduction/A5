@@ -1,3 +1,74 @@
+/*	EXAMPLE!
+	
+	<? if($articleCommentsCount > $limit) :?>
+	<div id="pager_comments">
+		<? for($i=1; $i<=$p_count;$i++)  :?>
+			<a href="#"><?= $i ?></a>
+		<? endfor;?>	
+	</div>		
+	<? endif;?>
+	
+	<aside class="comments" id="Comments_JS">
+		<h2>Комментарии (<font class="countBar_JS"><?= $articleCommentsCount ?></font>)</h2>
+		
+		<article class="commentExamle_JS" style="display:none">
+			<div class="fromUserID_JS" style="display:none"></div>
+			<strong class="fromUserName_JS"></strong>
+			<img class="avatar_JS" src="/img/avatars/50x50.png" alt="" />
+			<p><img src="/img/comment.png" alt="" /><font class="content_JS"></font></p>
+			<span class="created_JS"></span>
+			<div><a class="remove_JS" href="#">Удалить</a><a class="answer_JS" href="#">Ответить</a><a class="answerPrivate_JS" href="#">Написать личное сообщение</a></div>
+		</article>
+		
+		<div class="list_JS">
+		<? if($articleCommentsList) :?><? foreach($articleCommentsList as $item)  :?>
+			<? if(  !$item['private']  || ( $item['from_user'] == $authUserID ||  $item['to_user'] == $authUserID ) ) :?>
+			<article class="commentItem_JS" id="comment_<?= $item['id']; ?>">
+				<div class="fromUserID_JS" style="display:none"><?= $item['from_user']; ?></div>
+				<strong class="fromUserName_JS"><?= $item['username'] ?></strong>
+				<img class="avatar_JS" src="<?= !empty($item['avatar']) ? $item['avatar'] : "/img/avatars/50x50.png" ?>" alt="" />
+				<p><img src="/img/comment.png" alt="" /><font class="content_JS"><?= $item['comment'] ?></font></p>
+				<span class="created_JS"><?= Date::format($item['created'], "j M") ?></span>
+				<? if($authUserID) :?>
+				<div><? if($item['from_user'] == $authUserID || $user->admin ) :?><a class="remove_JS" rel="<?= $item['id']; ?>" href="#">Удалить</a><? endif; ?><a class="answer_JS" rel="<?= $item['id']; ?>" href="#">Ответить</a><a class="answerPrivate_JS" rel="<?= $item['id']; ?>" href="#">Написать личное сообщение</a></div>												
+				<? endif; ?>
+			</article>
+			<? endif;?>
+		<? endforeach;?><? endif;?>
+		</div>
+		<? if($authUserID) :?>
+			<article class="comment comment_JS" id="user_<?= $authUserID ?>">
+					<strong class="authUsername_JS"><?= $user->name ?></strong>
+					<img class="authAvatar_JS" src="<?= ( !empty($user->avatar) ) ? $user->avatar : "/img/avatars/50x50.png" ?>" alt="" />
+					<p><textarea class="input_JS" name=""></textarea></p>
+					<a class="button button_JS" href="#">Комментировать</a>
+			</article>
+		<? endif; ?>	
+	</aside>
+
+
+	<script type="text/javascript">	
+
+		new Comments({
+			admin: <?= ($user) ? $user->admin : 0 ?>,
+			pagination: true,
+			pageID: <?= $articeleID ?>,
+			limit: '<?= $limit ?>',
+			count: <?= $articleCommentsCount ?>,
+			addUrl: "/lovestory/comments/add",
+			removeUrl: "/lovestory/comments/delete",
+			getMoreUrl: "/lovestory/comments/list",
+		
+		});
+
+
+	</script>
+
+
+*/
+
+
+
 
 var Comments = function(params){
 	
