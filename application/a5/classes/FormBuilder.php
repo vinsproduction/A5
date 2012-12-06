@@ -82,7 +82,7 @@
 		if(!$name) $this->setError('method "input" :  name can not be empty');	
 		$this->name = $name;
 		$label = ( $this->label == false) ? "" : $this->labels[$this->labelName];		
-		$this->_fields[$this->formID][$this->name] = $label.'<input name="'.$this->name.'" style="'.$this->defaultInputCss.'" class="" id="" value=""  type="" />';
+		$this->_fields[$this->formID][$this->name] = $label.'<input name="'.$this->name.'" style="'.$this->defaultInputCss.'" class="" id="" value=""  type="text" />';
 		$this->input = true;
 		$this->label = false;
 		return $this;
