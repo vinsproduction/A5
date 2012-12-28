@@ -1,6 +1,0 @@
-<? if (!is_empty($error_message)): ?>
-	alert('<?= j($error_message) ?>');
-	rename_object('<?= j($_POST["node_id"]) ?>');
-<? else: ?>
-	AJAX.update('tree_area', '<?= url_for("@jsescape", true, "@escape", false, "action", "load-files", "root_path", $root_path, "path", $current_folder) ?>');
-<? endif ?>

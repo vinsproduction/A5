@@ -1,4 +1,0 @@
-<? foreach ($queue_nodes as $item): ?>
-	window.queue_nodes.push({'id': '<?= $item["id"] ?>', 'load': <?= $item["load"] ? "true" : "false" ?>, 'level': <?= $item["level"] ?>});
-<? endforeach ?>
-window.process_queue();

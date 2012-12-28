@@ -1,5 +1,0 @@
-<? if ($error_string): ?>
-	alert('Ошибка:\n<?= j($error_string) ?>');
-<? else: ?>
-	location.href = '<?= url_for("@overwrite", true, "@jsescape", true, "@escape", false, "action", "types-fields", "selected_nodes", $affected_nodes) ?>';
-<? endif ?>
