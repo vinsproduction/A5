@@ -697,7 +697,7 @@ function declOfNum($number, $titles, $view_number=true)
 // Добротный var_export :)
 // Example: varexp(array('a'=>'asdasd'),array('2'=>'33333'),'noexit');
 
-function varexp($vars)
+function varexp($vars = '')
 {
 
 	$numargs = func_num_args();
@@ -726,6 +726,36 @@ function varexp($vars)
 	print '<hr>';
 	
 	if( !in_array('noexit',$args, true) || $vars === null) { exit; }
+
+}
+
+function varexp_($vars = '')
+{
+
+	$numargs = func_num_args();
+	$args = func_get_args();
+
+	if($numargs>1){
+
+		foreach( $args as $i=>$arg){
+
+			if( $arg != 'noexit'){
+
+				print '<pre><b>Arg '.($i+1).':</b> ';
+				var_export($arg); 
+				print '</pre>';					
+			}	
+		}
+		
+	}else{
+		
+		print '<pre><b>Arg 1:</b> ';
+		var_export($vars); 
+		print '</pre>';
+	
+	}
+	
+	print '<hr>';
 
 }
 
